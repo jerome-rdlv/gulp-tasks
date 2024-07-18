@@ -1,3 +1,18 @@
+@font-face {
+    font-family: 'Bitter';
+    src: url('../font/Bitter-VariableFont_wght.woff2') format('woff2'),
+    url('../font/Bitter-VariableFont_wght.woff') format('woff');
+    font-weight: 100 1000;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
     color: red;
+}
+
+@media print {
+    body {
+        background: white;
+    }
 }

@@ -1,25 +1,23 @@
-module.exports = function (config) {
-    const
-        gulp = require('gulp'),
-        gulpClean = require('gulp-clean');
+const gulp = require('gulp');
+const clean = require('gulp-clean');
 
-    var src = [
-        config.distPath + '*',
-        config.varPath + '*'
-    ];
-
-    if (config.tasks.cleanex) {
-        config.tasks.cleanex.forEach(function (exclude) {
-            src.push('!' + config.distPath + exclude);
-        });
+/**
+ * @param globs Array of paths to delete. May contain exclusions prefixed by an exclamation mark
+ * @param config
+ * @returns {function(): *}
+ */
+module.exports = function (globs, config = {}) {
+    function main() {
+        return gulp.src(globs, {
+            ...{
+                allowEmpty: true,
+                dot: true,
+                read: false
+            },
+            ...config
+        }).pipe(clean());
     }
 
-    return function clean() {
-        return gulp.src(src, {
-            allowEmpty: true,
-            base: config.srcPath,
-            dot: true,
-            read: false
-        }).pipe(gulpClean());
-    };
+    main.displayName = 'clean';
+    return main;
 };

@@ -1,121 +1,101 @@
-module.exports = function (config) {
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const gulp = require('gulp');
+const gulpif = require('gulp-if');
+const named = require('vinyl-named');
+const touch = require('../lib/touch');
+const terser = require('gulp-terser');
+const webpack = require('webpack-stream');
 
-    if (!config.tasks.js || !config.tasks.js.length) {
-        return false;
-    }
+module.exports = function ({globs, base, dist}) {
 
-    const ESLintPlugin = require('eslint-webpack-plugin');
-    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
-    function getWPConfig(watch) {
-        return {
-            target: 'web',
-            module: {
-                rules: [
-                    // {
-                    //     enforce: 'pre',
-                    //     test: /\.m?jsx?$/,
-                    //     exclude: /node_modules/,
-                    //     loader: 'eslint-loader',
-                    //     options: {
-                    //         failOnError: false,
-                    //         failOnWarning: false,
-                    //     }
-                    // },
-                    {
-                        test: /\.m?jsx?$/,
-                        exclude: /node_modules/,
-                        use: {
-                            loader: 'babel-loader',
-                            options: {
-                                exclude: 'node_modules/**',
-                                cacheDirectory: true,
-                                presets: [
-                                    [
-                                        "@babel/preset-env",
-                                        {
-                                            corejs: 3.22,
-                                            useBuiltIns: 'entry',
-                                            modules: 'auto',
-                                            debug: !!config.debug
-                                        }
-                                    ]
+    const webpackConfig = {
+        target: 'web',
+        module: {
+            rules: [
+                // {
+                //     enforce: 'pre',
+                //     test: /\.m?jsx?$/,
+                //     exclude: /node_modules/,
+                //     loader: 'eslint-loader',
+                //     options: {
+                //         failOnError: false,
+                //         failOnWarning: false,
+                //     }
+                // },
+                {
+                    test: /\.m?jsx?$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'babel-loader', options: {
+                            exclude: 'node_modules/**',
+                            cacheDirectory: true,
+                            presets: [
+                                [
+                                    "@babel/preset-env",
+                                    {
+                                        corejs: 3.22,
+                                        useBuiltIns: 'entry',
+                                        modules: 'auto',
+                                        debug: !!process.env.DEBUG
+                                    }
                                 ]
-                            }
-                        },
+                            ]
+                        }
                     },
-                    {
-                        test: /\.(txt|glsl|svg)$/i,
-                        use: 'raw-loader',
-                    },
-                ],
-            },
-            watch: !!watch,
-            watchOptions: {
-                ignored: '/node_modules/',
-            },
-            devtool: config.production ? false : 'eval',
-            mode: config.production ? 'production' : 'development',
-            output: {
-                filename: 'js/[name].js'
-            },
-            plugins: [
-                new ESLintPlugin({
-                    configType: 'flat',
-                }),
-                new BundleAnalyzerPlugin({
-                    analyzerMode: 'static',
-                    reportFilename: config.distPath + '/report.html',
-                    openAnalyzer: false,
-                })
+                },
+                {
+                    test: /\.(txt|glsl|svg)$/i, use: 'raw-loader',
+                },
             ],
-        };
-    }
+        },
+        watchOptions: {
+            ignored: '/node_modules/',
+        },
+        devtool: process.env.NODE_ENV === 'production' ? false : 'eval',
+        mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+        output: {
+            filename: '[name].js'
+        },
+        plugins: [
+            new ESLintPlugin({
+                configType: 'flat',
+            }),
+            new BundleAnalyzerPlugin({
+                analyzerMode: 'static',
+                reportFilename: dist + '/report.html',
+                openAnalyzer: false,
+            })
+        ],
+        // watch: true,
+    };
 
-    const
-        gulp = require('gulp'),
-        gulpif = require('gulp-if'),
-        named = require('vinyl-named'),
-        touch = require('../lib/touch'),
-        terser = require('gulp-terser'),
-        webpack = require('webpack-stream');
-
-    let src;
-    if (config.tasks.js.length) {
-        src = config.tasks.js.map(function (entry) {
-            return config.srcPath + config.assetsDir + entry;
-        });
-    } else {
-        src = [config.srcPath + config.assetsDir + 'js/*.js'];
-    }
-
-    const js = function (cb, watch) {
-
-        return gulp.src(src, {
-            base: config.srcPath + 'js',
+    function main(cb, watch) {
+        return gulp.src(globs, {
+            base: base,
             sourcemaps: true,
         })
             .pipe(named(function (file) {
-                return file.relative.substr(0, file.relative.length - file.extname.length);
+                // chunk name
+                return file.relative.substring(0, file.relative.length - file.extname.length);
             }))
             .pipe(webpack({
                 watch: !!watch,
-                config: getWPConfig(watch)
+                config: webpackConfig,
             }))
-            .pipe(gulpif(config.production, terser()))
-            .pipe(gulp.dest(config.distPath, {
+            .pipe(gulpif(process.env.NODE_ENV === 'production', terser()))
+            .pipe(gulp.dest(dist, {
                 sourcemaps: true
             }))
-            .pipe(touch())
-            ;
-    };
+            .pipe(touch());
+    }
 
-    const watch_js = function (cb) {
-        return js(cb, true);
-    };
+    function watch(cb) {
+        return main(cb, true);
+    }
 
-    return [
-        js,
-        watch_js
-    ];
+    main.displayName = 'js';
+    watch.displayName = 'js:watch';
+
+    return {main, watch, webpackConfig};
 };

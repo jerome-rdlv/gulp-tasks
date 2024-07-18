@@ -1,137 +1,117 @@
+const changed = require('gulp-changed');
+const cleanSvg = require('../lib/clean-svg');
+const clearSvgParams = require('../lib/clear-svg-params');
+const crypto = require('crypto');
+const fs = require('fs');
+const gulp = require('gulp');
+const path = require('path');
+const rename = require('gulp-rename');
+const svgo = require('../lib/svgo');
+const svgToScss = require('../lib/svg-to-scss');
+const svgToSymbol = require('../lib/svg-to-symbol')();
+const touch = require('../lib/touch');
+
+function getFileSvgminConfig(file) {
+    const dom = new (require('jsdom').JSDOM)(file.contents.toString(), {
+        contentType: 'image/svg+xml',
+    });
+    const opts = dom.window.document.getElementById('svgo-options')?.innerHTML.trim();
+    return opts ? JSON.parse(opts) : [];
+}
+
+function svgoConfigCallback(file) {
+    const prefix = 'i' + crypto.createHash('sha1')
+        .update(path.basename(file.relative, path.extname(file.relative)))
+        .digest('hex')
+        .substring(0, 4);
+
+    /*
+    Configuration can be disabled in svg files
+    with following script:
+    
+        <script type="application/json" id="svgo-options">
+            [
+            "removeHiddenElems",
+            "convertPathData",
+            ]
+        </script>
+     */
+    const defaults = {...require('../defaults/svgo')};
+    const disabled = getFileSvgminConfig(file);
+
+    defaults.path = file.path;
+    defaults.plugins = defaults.plugins.filter(plugin => {
+        return disabled.indexOf(plugin.name) === -1;
+    });
+
+    return defaults;
+}
+
 module.exports = function (config) {
 
-    if (config.tasks.svg === false) {
-        return false;
-    }
+    const cacheBustSvgRefs = require('../lib/cachebust-svg-refs').get(config);
 
-    const
-        cacheBustSvgRefs = require('../lib/cachebust-svg-refs')(config),
-        changed = require('gulp-changed'),
-        cheerio = require('cheerio'),
-        cleanSvg = require('../lib/clean-svg')(config),
-        clearSvgParams = require('../lib/clear-svg-params'),
-        crypto = require('crypto'),
-        fs = require('fs'),
-        gulp = require('gulp'),
-        path = require('path'),
-        rename = require('gulp-rename'),
-        svgmin = require('gulp-svgmin'),
-        svgToScss = require('../lib/svg-to-scss'),
-        svgToSymbol = require('../lib/svg-to-symbol')(config),
-        touch = require('../lib/touch');
-
-    function svgminCallback(file) {
-        const prefix = 'i' + crypto.createHash('sha1')
-            .update(path.basename(file.relative, path.extname(file.relative)))
-            .digest('hex')
-            .substr(0, 4);
-
-        /*
-        This configuration can be overriden in svg files
-        with following script:
-        
-            <script type="application/json" id="svgo-options">
-                [
-                    { "removeHiddenElems": false }
-                ]
-            </script>
-         */
-        const plugins = [
-            {name: 'removeDoctype'},
-            {name: 'removeComments'},
-            {name: 'removeTitle'},
-            {name: 'convertStyleToAttrs'},
-            {name: 'convertTransform'},
-            {
-                name: 'cleanupIDs',
-                params: {
-                    prefix: prefix + '-',
-                    minify: true
-                }
-            },
-            {name: 'removeViewBox', active: false},
-            {name: 'removeStyleElement'},
-            {
-                name: 'cleanupNumericValues',
-                params: {
-                    floatPrecision: 5
-                }
-            }
-        ];
-
-        // per file svgmin options
-        const $ = cheerio.load(file.contents.toString(), config.cheerioParserSvgOptions);
-        const $opts = $('#svgo-options');
-        const opts = JSON.parse($opts.html());
-
-        if (opts) {
-            for (let i = 0; i < opts.length; ++i) {
-                plugins.push(opts[i]);
-            }
-        }
-
-        return {
-            multipass: true,
-            full: true,
-            plugins: plugins,
-        };
-    }
-
-    const svg = function () {
-        return gulp.src(config.srcPath + config.assetsDir + 'svg/**/*.svg', {base: config.srcPath})
-            .pipe(changed(config.varPath))
+    const main = function () {
+        return gulp.src(config.globs, {base: config.base})
+            .pipe(changed(config.var))
             .pipe(cacheBustSvgRefs())
-            .pipe(svgmin(svgminCallback))
+            .pipe(svgo(svgoConfigCallback))
             .pipe(cleanSvg())
-            .pipe(gulp.dest(config.varPath)).pipe(touch())
+            .pipe(gulp.dest(config.var)).pipe(touch())
             .pipe(clearSvgParams())
-            .pipe(gulp.dest(config.distPath)).pipe(touch());
+            .pipe(gulp.dest(config.dist)).pipe(touch());
     };
 
+    main.displayName = 'svg';
+
     // svg availability in SCSS
-    const svg_scss = function () {
+    const scss = function () {
 
         // look for template
-        let tpl = config.srcPath + 'svg.scss.mustache';
+        let tpl = config.base + '/svg.scss.mustache';
         if (!fs.existsSync(tpl)) {
             tpl = __dirname + '/../svg.scss.mustache';
         }
 
-        return gulp.src(config.varPath + config.assetsDir + 'svg/**/*.svg', {base: config.varPath + config.assetsDir + 'svg'})
+        return gulp.src(config.var + '/svg/**/*.svg', {base: config.var + '/svg'})
             .pipe(svgToScss({
                 template: tpl,
                 output: '_svg.scss'
             }))
-            .pipe(gulp.dest(config.varPath)).pipe(touch())
-            ;
+            .pipe(gulp.dest(config.var))
+            .pipe(touch());
     };
 
+    scss.displayName = 'svg:scss';
+
     // svg availability for inclusion as inline symbol in html
-    const svg_symbol = function () {
-        return gulp.src(config.varPath + config.assetsDir + 'svg/**/*.svg', {base: config.varPath})
-            .pipe(changed(config.distPath, {extension: '.symbol.svg'}))
+    const symbol = function () {
+        return gulp.src(config.var + '/svg/**/*.svg', {base: config.var})
+            .pipe(changed(config.dist, {extension: '.symbol.svg'}))
             .pipe(svgToSymbol())
             .pipe(clearSvgParams())
             .pipe(rename(function (path) {
                 path.extname = '.symbol.svg';
             }))
-            .pipe(gulp.dest(config.distPath)).pipe(touch());
-
+            .pipe(gulp.dest(config.dist))
+            .pipe(touch());
     };
 
-    const watch_svg = function () {
+    symbol.displayName = 'svg:symbol';
+
+    const watch = function () {
         // prepare svg, create symbols and update scss lib
-        return gulp.watch([
-            config.srcPath + 'svg.scss.mustache',
-            config.srcPath + config.assetsDir + 'svg/**/*.svg',
-            config.srcPath + config.assetsDir + 'img/*',
-        ], gulp.series(svg, gulp.parallel(svg_scss, svg_symbol)));
+        return gulp.watch(
+            config.globs.concat([`${config.base}/svg.scss.mustache`]),
+            gulp.series(main, gulp.parallel(scss, symbol)));
     };
 
-    return [
-        svg,
-        watch_svg,
-        svg_scss,
-        svg_symbol
-    ];
+    watch.displayName = 'svg:watch';
+
+    return {
+        main,
+        watch,
+        scss,
+        symbol,
+    };
 };

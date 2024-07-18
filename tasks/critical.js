@@ -1,21 +1,10 @@
-module.exports = function (config) {
-    if (!config.tasks.critical || !config.tasks.critical.length) {
-        return false;
-    }
+const fs = require('fs/promises');
 
-    const
-        crit = require('critical'),
-        fs = require('fs/promises'),
-        gulp = require('gulp'),
-        through = require('through2'),
-        Vinyl = require('vinyl');
-
-    const baseDir = config.distPath + config.assetsDir + 'css/critical';
-
-    return function critical() {
-        return Promise.all(config.tasks.critical.map(function (item) {
-            return crit.generate({
-                src: item.url,
+module.exports = function ({dist, entries}) {
+    function critical() {
+        return Promise.all(entries.map(entry => {
+            return require('critical').generate({
+                src: entry.url,
                 dimensions: [
                     {
                         height: 640,
@@ -26,11 +15,16 @@ module.exports = function (config) {
                         width: 1300,
                     },
                 ]
-            }).then(function ({css}) {
-                return fs.mkdir(baseDir, {recursive: true}).then(function () {
-                    return fs.writeFile(`${baseDir}/${item.name}.css`, css);
-                });
-            }).catch(console.error);
+            }, null)
+                .then(function ({css}) {
+                    return fs.mkdir(dist, {recursive: true}).then(function () {
+                        return fs.writeFile(`${dist}/${entry.name}.css`, css);
+                    });
+                })
+                .catch(console.error);
         }));
-    };
+    }
+
+    critical.displayName = 'critical';
+    return critical;
 };

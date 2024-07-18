@@ -1,95 +1,75 @@
+const changed = require('gulp-changed');
+const gulp = require('gulp');
+const gulpif = require('gulp-if');
+const path = require('path');
+const postcss = require('gulp-postcss');
+const rename = require('gulp-rename');
+const touch = require('../lib/touch');
+
 module.exports = function (config) {
 
-    if (!config.tasks.scss) {
-        return false;
-    }
+    const compile = (function iife() {
+        switch (config.engine) {
+            case 'dart':
+                return require('gulp-exec')(
+                    file => `/usr/bin/sass "${file.path}"`,
+                    {
+                        continueOnError: false,
+                        pipeStdout: true
+                    }
+                ).on('error', console.log);
+            default:
+                const sass = require('gulp-sass')(require('sass'));
+                return sass({
+                    outputStyle: 'expanded',
+                    precision: 8
+                }, false).on('error', sass.logError);
+        }
+    })();
 
-    const
-        autoprefixer = require('autoprefixer'),
-        cacheBustCssRefs = require('../lib/cachebust-css-refs')(config),
-        changed = require('gulp-changed'),
-        cssnano = require('cssnano'),
-        splitPrint = require('../lib/postcss-split-print')(config.tasks.scss.print),
-        subset = require('../lib/css-targeted-subset')(config.tasks.scss.split),
-        gulp = require('gulp'),
-        gulpif = require('gulp-if'),
-        path = require('path'),
-        postcss = require('gulp-postcss'),
-        pxtorem = require('postcss-pxtorem'),
-        rename = require('gulp-rename'),
-        touch = require('../lib/touch');
+    const cacheBustCssRefs = require('../lib/cachebust-css-refs').get(config);
+    const splitPrint = require('../lib/postcss-split-print')({filter: config.print});
 
+    function main(globs) {
 
-    const scss = function (src) {
-
-        if (!src || typeof src !== 'string' || /^_/.test(path.basename(src))) {
-            src = [
-                config.srcPath + config.assetsDir + 'scss/*.scss',
-                '!' + config.srcPath + config.assetsDir + 'scss/_*.scss',
-                config.srcPath + config.assetsDir + 'scss/**/*.scss',
-                '!' + config.srcPath + config.assetsDir + 'scss/**/_*.scss',
-            ];
+        if (!globs || typeof globs !== 'string' || /^_/.test(path.basename(globs))) {
+            globs = config.globs;
         }
 
-        let compile;
-
-        if (config.tasks.scss.engine === 'dart') {
-            compile = require('gulp-exec')(file => `/usr/bin/sass "${file.path}"`, {
-                continueOnError: false,
-                pipeStdout: true
-            }).on('error', console.log);
-        } else {
-            const sass = require('gulp-sass')(require('sass'));
-            compile = sass({
-                outputStyle: 'expanded',
-                precision: 8
-            }).on('error', sass.logError);
-        }
-
-        return gulp.src(src, {base: config.srcPath})
-            .pipe(changed(config.distPath))
+        return gulp.src(globs, {base: config.base})
+            .pipe(changed(config.dist))
             .pipe(compile)
             .pipe(rename(function (path) {
                 path.extname = path.extname.replace('scss', 'css');
                 path.dirname = path.dirname.replace('scss', 'css');
             }))
             // these transforms are needed for cross-platform tests during development
-            .pipe(postcss([
-                autoprefixer({}),
-                pxtorem(config.tasks.scss.pxtorem),
-            ]))
+            .pipe(postcss(config.transforms))
             .pipe(splitPrint())
-            .pipe(subset())
             .pipe(gulpif(
-                config.production,
-                cacheBustCssRefs(config.distPath + config.assetsDir + 'css/')
+                process.env.NODE_ENV === 'production',
+                cacheBustCssRefs()
             ))
             .pipe(gulpif(
                 function (file) {
                     // disable cssnano for some files
-                    return config.production && config.tasks.scss.nonano.indexOf(file.basename) === -1;
+                    return process.env.NODE_ENV === 'production' &&
+                        config.nooptims.indexOf(file.basename) === -1;
                 },
-                postcss([
-                    cssnano(config.tasks.scss.cssnano),
-                ])
+                postcss(config.optimizations)
             ))
-            .pipe(gulp.dest(config.distPath))
+            .pipe(gulp.dest(config.dist))
             .pipe(touch())
             ;
+    }
+
+    const watch = function () {
+        return gulp.watch([].concat(config.globs, config.watch || []), main);
     };
 
-    const watch_scss = function () {
-        return gulp.watch([
-            config.srcPath + config.assetsDir + 'scss/*.scss',
-            config.srcPath + config.assetsDir + 'scss/**/*.scss',
-            path.resolve(config.srcPath + '../blocks') + '/**/*.scss',
-            config.varPath + '_icon-svg.scss'
-        ], gulp.series(scss));
-    };
+    main.displayName = 'scss';
+    watch.displayName = 'scss:watch';
 
-    return [
-        scss,
-        watch_scss
-    ];
+    return {main, watch};
 
 };

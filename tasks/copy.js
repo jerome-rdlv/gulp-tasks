@@ -1,34 +1,25 @@
-module.exports = function (config) {
+const changed = require('gulp-changed');
+const gulp = require('gulp');
+const touch = require('../lib/touch');
 
-    if (!config.tasks.copy || !config.tasks.copy.length) {
-        return false;
+module.exports = function ({globs, base, dist}) {
+
+    function main() {
+        return gulp.src(globs, {
+            allowEmpty: true,
+            base: base
+        })
+            .pipe(changed(dist))
+            .pipe(gulp.dest(dist))
+            .pipe(touch());
     }
 
-    const
-        browserSync = require('../lib/browsersync'),
-        changed = require('gulp-changed'),
-        gulp = require('gulp'),
-        touch = require('../lib/touch');
+    function watch() {
+        return gulp.watch(globs, main);
+    }
 
-    const resources = config.tasks.copy.map(function (resource) {
-        return config.srcPath + resource;
-    });
+    main.displayName = 'copy';
+    watch.displayName = 'copy:watch';
 
-    const task = function copy() {
-        return gulp.src(resources, {
-            allowEmpty: true,
-            base: config.srcPath
-        })
-            .pipe(changed(config.distPath))
-            .pipe(gulp.dest(config.distPath))
-            .pipe(touch())
-            ;
-    };
-
-    return [
-        task,
-        function watch_copy() {
-            return gulp.watch(resources, task);
-        }
-    ];
+    return {main, watch};
 };

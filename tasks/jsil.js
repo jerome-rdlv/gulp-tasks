@@ -1,43 +1,29 @@
-/*
-Check and compress scripts to be inlined in HTML. This task
-is different from `js` because it does not bundle dependencies.
+const eslint = require('gulp-eslint-new');
+const gulp = require('gulp');
+const gulpif = require('gulp-if');
+const touch = require('../lib/touch');
+const terser = require('gulp-terser');
+
+/**
+ * Check and compress scripts to be inlined in HTML. This task
+ * is different from `js` because it does not bundle dependencies.
  */
-module.exports = function (config) {
-
-    if (config.tasks.jsil === false) {
-        return;
-    }
-
-    const
-        eslint = require('gulp-eslint-new'),
-        gulp = require('gulp'),
-        gulpif = require('gulp-if'),
-        touch = require('../lib/touch'),
-        terser = require('gulp-terser');
-
-    const src = typeof config.tasks.jsil === 'object'
-        ? config.tasks.jsil.map(function (entry) {
-            return config.srcPath + config.assetsDir + entry;
-        })
-        : [];
-
-    src.push(config.srcPath + config.assetsDir + 'js/inline/*.js');
-
-    const jsil = function () {
-        return gulp.src(src, {base: config.srcPath})
+module.exports = function ({globs, base, dist}) {
+    const main = function () {
+        return gulp.src(globs, {base: base})
             .pipe(eslint())
-            .pipe(gulpif(config.production, terser()))
-            .pipe(gulp.dest(config.distPath))
+            .pipe(gulpif(process.env.NODE_ENV === 'production', terser()))
+            .pipe(gulp.dest(dist))
             .pipe(touch())
             ;
     };
 
-    const watch_jsil = function () {
-        return gulp.watch(src, {base: config.srcPath}, jsil);
+    const watch = function () {
+        return gulp.watch(globs, main);
     };
 
-    return [
-        jsil,
-        watch_jsil
-    ];
+    main.displayName = 'jsil';
+    watch.displayName = 'jsil:watch';
+
+    return {main, watch};
 };

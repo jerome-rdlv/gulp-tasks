@@ -1,15 +1,26 @@
+const browserSync = require('browser-sync');
+let count = 0;
+
+/**
+ * @see https://browsersync.io/docs/options#option-watchOptions
+ */
 module.exports = function (config) {
+    function browsersync() {
+        return new Promise(function (resolve) {
+            browserSync.create('bs-' + (++count)).init({
+                    ...{
+                        files: null, // to override
+                        open: false,
+                        proxy: null, // to override
+                        ui: false,
+                    },
+                    ...config
+                },
+                resolve
+            );
+        });
+    }
 
-    const
-        browserSync = require('../lib/browsersync'),
-        gulp = require('gulp')
-    ;
-
-    // return the task
-    return function browsersync() {
-        if (!config.url || !config.url.length) {
-            throw 'You must add --url argument for browserSync to work.';
-        }
-        return browserSync.init(config);
-    };
+    browsersync.displayName = 'browsersync';
+    return browsersync;
 };
