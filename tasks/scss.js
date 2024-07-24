@@ -34,6 +34,7 @@ module.exports = function (config) {
 
         if (!globs || typeof globs !== 'string' || /^_/.test(path.basename(globs))) {
             globs = config.globs;
+            globs.push('!**/_*.scss');
         }
 
         return gulp.src(globs, {base: config.base})

@@ -7,7 +7,10 @@ const imageminOptions = require('../defaults/imagemin');
 
 module.exports = function ({globs, base, dist}) {
     const main = function () {
-        return gulp.src(globs, {base: base})
+        return gulp.src(globs, {
+            base: base,
+            encoding: false,
+        })
             .pipe(changed(dist))
             .pipe(resize({
                 quality: 0.85

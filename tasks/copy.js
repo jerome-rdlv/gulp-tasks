@@ -7,7 +7,8 @@ module.exports = function ({globs, base, dist}) {
     function main() {
         return gulp.src(globs, {
             allowEmpty: true,
-            base: base
+            base: base,
+            encoding: false,
         })
             .pipe(changed(dist))
             .pipe(gulp.dest(dist))

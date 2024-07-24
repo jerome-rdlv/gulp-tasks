@@ -1,5 +1,4 @@
 /**
- * @see node_modules/gulpfile/defaults.js for possible options.
  * Some options can be overridden by CLI arguments:
  *  - --url=http://example.org
  *  - --production or --prod
@@ -24,7 +23,7 @@ function load(task, override) {
     });
 }
 
-const clean = load('clean', [
+const clean = require('../tasks/clean')([
     `${config.var}/*`,
     `${config.dist}/*`,
     `!${config.dist}/report.html`,
