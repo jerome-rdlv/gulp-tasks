@@ -12,7 +12,7 @@ module.exports = function (config) {
         switch (config.engine) {
             case 'dart':
                 return require('gulp-exec')(
-                    file => `/usr/bin/sass "${file.path}"`,
+                    file => `/usr/bin/sass --silence-deprecation=mixed-decls "${file.path}"`,
                     {
                         continueOnError: false,
                         pipeStdout: true
