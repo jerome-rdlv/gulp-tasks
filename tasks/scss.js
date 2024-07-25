@@ -8,7 +8,7 @@ const touch = require('../lib/touch');
 
 module.exports = function (config) {
 
-    const compile = (function iife() {
+    const compile = function () {
         switch (config.engine) {
             case 'dart':
                 return require('gulp-exec')(
@@ -22,24 +22,24 @@ module.exports = function (config) {
                 const sass = require('gulp-sass')(require('sass'));
                 return sass({
                     outputStyle: 'expanded',
-                    precision: 8
+                    precision: 8,
+                    silenceDeprecations: ['mixed-decls'],
                 }, false).on('error', sass.logError);
         }
-    })();
+    };
 
     const cacheBustCssRefs = require('../lib/cachebust-css-refs').get(config);
     const splitPrint = require('../lib/postcss-split-print')({filter: config.print});
 
-    function main(globs) {
+    const watchGlobs = [].concat(config.globs, config.watch || []);
 
-        if (!globs || typeof globs !== 'string' || /^_/.test(path.basename(globs))) {
-            globs = config.globs;
-            globs.push('!**/_*.scss');
-        }
+    const globs = config.globs;
+    globs.push('!**/_*.scss');
 
+    function main() {
         return gulp.src(globs, {base: config.base})
             .pipe(changed(config.dist))
-            .pipe(compile)
+            .pipe(compile())
             .pipe(rename(function (path) {
                 path.extname = path.extname.replace('scss', 'css');
                 path.dirname = path.dirname.replace('scss', 'css');
@@ -65,12 +65,11 @@ module.exports = function (config) {
     }
 
     const watch = function () {
-        return gulp.watch([].concat(config.globs, config.watch || []), main);
+        return gulp.watch(watchGlobs, main);
     };
 
     main.displayName = 'scss';
     watch.displayName = 'scss:watch';
 
     return {main, watch};
-
 };
