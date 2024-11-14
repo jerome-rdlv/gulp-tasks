@@ -7,17 +7,27 @@ let count = 0;
 module.exports = function (config) {
     function browsersync() {
         return new Promise(function (resolve) {
-            browserSync.create('bs-' + (++count)).init({
-                    ...{
-                        files: null, // to override
-                        open: false,
-                        proxy: null, // to override
-                        ui: false,
-                    },
-                    ...config
+            config = {
+                ...{
+                    files: null, // to override
+                    open: false,
+                    proxy: null, // to override
+                    ui: false,
                 },
-                resolve
-            );
+                ...config
+            };
+            if (typeof config.proxy === 'string') {
+                const target = config.proxy;
+                config.proxy = {
+                    target: target,
+                    proxyRes: [
+                        (proxy, req, res) => {
+                            res.setHeader('X-BrowserSync-Proxy', target);
+                        }
+                    ]
+                };
+            }
+            browserSync.create('bs-' + (++count)).init(config, resolve);
         });
     }
 
