@@ -3,6 +3,7 @@ module.exports = {
     propList: [
         '*',
         '!--height-adminbar',
+        '!--px-*',
     ],
     selectorBlackList: [],
     replace: true,
