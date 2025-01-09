@@ -28,6 +28,7 @@ module.exports = function (config) {
         }
     };
 
+    // todo replace with postcss plugin
     const cacheBustCssRefs = require('../lib/cachebust-css-refs').get(config);
     const splitPrint = require('../lib/postcss-split-print')({filter: config.print});
 
