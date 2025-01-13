@@ -43,7 +43,6 @@ module.exports = function (config) {
             .pipe(compile())
             .pipe(rename(function (path) {
                 path.extname = path.extname.replace('scss', 'css');
-                path.dirname = path.dirname.replace('scss', 'css');
             }))
             // these transforms are needed for cross-platform tests during development
             .pipe(postcss(config.transforms))
@@ -60,6 +59,9 @@ module.exports = function (config) {
                 },
                 postcss(config.optimizations)
             ))
+            .pipe(rename(function (path) {
+                path.dirname = path.dirname.replace('scss', 'css');
+            }))
             .pipe(gulp.dest(config.dist))
             .pipe(touch())
             ;
