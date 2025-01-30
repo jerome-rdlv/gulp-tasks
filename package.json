@@ -42,6 +42,7 @@
         "jsdom": "^24.1",
         "mustache": "^2.3",
         "path": "^0.12",
+        "plugin-error": "^2.0",
         "postcss": "^8.3",
         "postcss-preset-env": "^10.1",
         "postcss-pxtorem": "^6.1",

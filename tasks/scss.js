@@ -30,7 +30,8 @@ module.exports = function (config) {
 
     // todo replace with postcss plugin
     const cacheBustCssRefs = require('../lib/cachebust-css-refs').get(config);
-    const splitPrint = require('../lib/postcss-split-print')({filter: config.print});
+    const splitPrintScreen = require('../lib/css-split-print-screen')({filter: config.print});
+    const splitMobileDesktop = require('../lib/css-split-mobile-desktop')(config.split);
 
     const watchGlobs = [].concat(config.globs, config.watch || []);
 
@@ -46,7 +47,7 @@ module.exports = function (config) {
             }))
             // these transforms are needed for cross-platform tests during development
             .pipe(postcss(config.transforms))
-            .pipe(splitPrint())
+            .pipe(splitPrintScreen())
             .pipe(gulpif(
                 process.env.NODE_ENV === 'production',
                 cacheBustCssRefs()
@@ -59,6 +60,7 @@ module.exports = function (config) {
                 },
                 postcss(config.optimizations)
             ))
+            .pipe(splitMobileDesktop())
             .pipe(rename(function (path) {
                 path.dirname = path.dirname.replace('scss', 'css');
             }))
