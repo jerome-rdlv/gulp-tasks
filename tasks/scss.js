@@ -47,7 +47,6 @@ module.exports = function (config) {
             }))
             // these transforms are needed for cross-platform tests during development
             .pipe(postcss(config.transforms))
-            .pipe(splitPrintScreen())
             .pipe(gulpif(
                 process.env.NODE_ENV === 'production',
                 cacheBustCssRefs()
@@ -60,6 +59,7 @@ module.exports = function (config) {
                 },
                 postcss(config.optimizations)
             ))
+            .pipe(splitPrintScreen())
             .pipe(splitMobileDesktop())
             .pipe(rename(function (path) {
                 path.dirname = path.dirname.replace('scss', 'css');
