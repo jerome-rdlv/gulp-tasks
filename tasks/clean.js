@@ -7,6 +7,7 @@ const clean = require('gulp-clean');
  * @returns {function(): *}
  */
 module.exports = function (globs, config = {}) {
+   
     function main() {
         return gulp.src(globs, {
             ...{

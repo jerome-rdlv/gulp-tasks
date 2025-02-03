@@ -1,16 +1,21 @@
 module.exports = {
     engine: 'dart',
-    transforms: [
-        require('postcss-pxtorem')(require('../defaults/pxtorem')),
-        require('postcss-preset-env'),
-    ],
-    optimizations: [
-        require('cssnano'),
+    transforms: {
+        pxtorem: require('postcss-pxtorem')(require('../defaults/pxtorem')),
+        env: require('postcss-preset-env'),
+    },
+    optimizations: {
+        cssnano: require('cssnano'),
         // add cachebusting here
-    ],
-    split: {
-        // Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
-        breakpoint: 26,
-        filter: /main\.css$/,
+    },
+    splits: {
+        desktop: {
+            // Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
+            breakpoint: 26,
+            filter: /main\.css$/,
+        },
+        print: {
+            filter: /main\.css$/,
+        }
     },
 };

@@ -8,7 +8,7 @@ const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
 const path = require('path');
 
-const config = {
+const paths = {
     base: `${__dirname}/src`,
     dist: `${__dirname}/assets`,
     var: `${__dirname}/var`,
@@ -16,69 +16,74 @@ const config = {
 
 const argv = yargs(hideBin(process.argv)).parse();
 
-function load(task, override) {
-    return (task instanceof Function ? task : require(`../tasks/${task}`))({
-        ...config,
-        ...override
-    });
-}
-
 const clean = require('../tasks/clean')([
-    `${config.var}/*`,
-    `${config.dist}/*`,
-    `!${config.dist}/report.html`,
+    `${paths.var}/*`,
+    `${paths.dist}/*`,
+    `!${paths.dist}/report.html`,
 ]);
 
-const critical = load('critical', {
-    dist: `${config.dist}/css/critical`,
+const critical = require('../tasks/critical')({
+    dist: `${paths.dist}/css/critical`,
     entries: [
         {name: 'front-page.php', url: argv['url']},
     ],
 });
 
-const img = load('img', {
-    globs: `${config.base}/img/**/*.+(gif|jpg|jpeg|png)`,
+const img = require('../tasks/img')({
+    globs: `${paths.base}/img/**/*.+(gif|jpg|jpeg|png)`,
+    base: paths.base,
+    dist: paths.dist
 });
 
-const browsersync = load('browsersync', {
+const browsersync = require('../tasks/browsersync')({
     proxy: argv['url'],
-    files: [`${config.dist}/**/*`]
+    files: [`${paths.dist}/**/*`]
 });
 
-const js = load('js', {
+const js = require('../tasks/js')({
     globs: [
-        `${config.base}/js/main.js`,
+        `${paths.base}/js/main.js`,
     ],
+    base: paths.base,
+    dist: paths.dist
 });
 
-const jsil = load('jsil', {
-    globs: [`${config.base}/js/inline/*.js`],
+const jsil = require('../tasks/jsil')({
+    globs: [`${paths.base}/js/inline/*.js`],
+    base: paths.base,
+    dist: paths.dist
 });
 
-const copy = load('copy', {
-    globs: [`${config.base}/font/*.{woff,woff2}`],
+const copy = require('../tasks/copy')({
+    globs: [`${paths.base}/font/*.{woff,woff2}`],
+    base: paths.base,
+    dist: paths.dist
 });
 
-const scss = load('scss', {
-    ...config,
+const scss = require('../tasks/scss')({
+    base: paths.base,
+    dist: paths.dist,
     ...require('../defaults/scss'),
     ...{
-        print: /main\.css$/,
+        // print: /main\.css$/,
         nooptims: [
             'editor.css',
         ],
         globs: [
-            `${config.base}/scss/**/*.scss`,
+            `${paths.base}/scss/**/*.scss`,
         ],
         watch: [
-            `${config.var}/_svg.scss`,
-            path.resolve(config.base + '/../blocks') + '/**/*.scss',
+            `${paths.var}/_svg.scss`,
+            path.resolve(paths.base + '/../blocks') + '/**/*.scss',
         ],
     }
 });
 
-const svg = load('svg', {
-    globs: [`${config.base}/svg/**/*.svg`],
+const svg = require('../tasks/svg')({
+    globs: [`${paths.base}/svg/**/*.svg`],
+    base: paths.base,
+    dist: paths.dist,
+    var: paths.var,
 });
 
 const main = series(
