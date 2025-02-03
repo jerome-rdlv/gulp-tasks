@@ -9,6 +9,10 @@
 
 body {
     color: red;
+
+    @media (min-width: 38em) {
+        color: blue;
+    }
 }
 
 @media print {

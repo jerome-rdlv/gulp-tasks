@@ -5,6 +5,7 @@ const path = require('path');
 const postcss = require('gulp-postcss');
 const rename = require('gulp-rename');
 const touch = require('../lib/touch');
+const sourcemaps = require('gulp-sourcemaps');
 
 module.exports = function (config) {
 
@@ -41,6 +42,7 @@ module.exports = function (config) {
     function main() {
         return gulp.src(globs, {base: config.base})
             .pipe(changed(config.dist))
+            .pipe(sourcemaps.init())
             .pipe(compile())
             .pipe(rename(function (path) {
                 path.extname = path.extname.replace('scss', 'css');
@@ -64,6 +66,7 @@ module.exports = function (config) {
             .pipe(rename(function (path) {
                 path.dirname = path.dirname.replace('scss', 'css');
             }))
+            .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.dist))
             .pipe(touch())
             ;
