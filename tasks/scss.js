@@ -1,7 +1,6 @@
 const changed = require('gulp-changed');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
-const path = require('path');
 const postcss = require('gulp-postcss');
 const rename = require('gulp-rename');
 const touch = require('../lib/touch');
@@ -9,7 +8,7 @@ const sourcemaps = require('gulp-sourcemaps');
 
 module.exports = function (config) {
 
-    const compile = function () {
+    function compile() {
         switch (config.engine) {
             case 'dart':
                 return require('gulp-exec')(
@@ -27,12 +26,26 @@ module.exports = function (config) {
                     silenceDeprecations: ['mixed-decls'],
                 }, false).on('error', sass.logError);
         }
-    };
+    }
+
+    function plugins(file) {
+        return {
+            plugins: Object.values({
+                ...config.transforms,
+                ...(
+                    process.env.NODE_ENV === 'production' && config.nooptims.indexOf(file.basename) === -1
+                        ? config.optimizations
+                        : {}
+                )
+            })
+        };
+    }
 
     // todo replace with postcss plugin
     const cacheBustCssRefs = require('../lib/cachebust-css-refs').get(config);
-    const splitPrintScreen = require('../lib/css-split-print-screen')({filter: config.print});
-    const splitMobileDesktop = require('../lib/css-split-mobile-desktop')(config.split);
+
+    const splitPrintScreen = require('../lib/css-split-print-screen')(config.splits.print);
+    const splitMobileDesktop = require('../lib/css-split-mobile-desktop')(config.splits.desktop);
 
     const watchGlobs = [].concat(config.globs, config.watch || []);
 
@@ -44,28 +57,16 @@ module.exports = function (config) {
             .pipe(changed(config.dist))
             .pipe(sourcemaps.init())
             .pipe(compile())
-            .pipe(rename(function (path) {
-                path.extname = path.extname.replace('scss', 'css');
-            }))
-            // these transforms are needed for cross-platform tests during development
-            .pipe(postcss(config.transforms))
+            .pipe(rename(path => path.extname = path.extname.replace('scss', 'css')))
+            .pipe(postcss(plugins))
+            // todo Move to postcss plugin
             .pipe(gulpif(
                 process.env.NODE_ENV === 'production',
                 cacheBustCssRefs()
             ))
-            .pipe(gulpif(
-                function (file) {
-                    // disable cssnano for some files
-                    return process.env.NODE_ENV === 'production' &&
-                        config.nooptims.indexOf(file.basename) === -1;
-                },
-                postcss(config.optimizations)
-            ))
             .pipe(splitPrintScreen())
             .pipe(splitMobileDesktop())
-            .pipe(rename(function (path) {
-                path.dirname = path.dirname.replace('scss', 'css');
-            }))
+            .pipe(rename(path => path.dirname = path.dirname.replace('scss', 'css')))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.dist))
             .pipe(touch())
