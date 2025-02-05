@@ -54,14 +54,6 @@ const browsersync = function () {
                 req.url = req.url.replace(/^(.+)\.v([0-9a-z]+)\.([a-z0-9]+)(\?.*)?$/, '$1.$3');
                 return next();
             },
-            // rewriteRules: [
-            //     {
-            //         // match: /^(.+)\.v([0-9a-z]+)\.([a-z0-9]+)(\?.*)?$/,
-            //         // replace: '$1.$3',
-            //         match: /.*/,
-            //         replace: 'index.html',
-            //     }
-            // ],
         }, resolve);
     });
 }
@@ -95,8 +87,9 @@ const font = require('../tasks/font')({
     // globs: [`${paths.base}/font/droid*.woff2`],
     base: paths.src,
     dist: paths.dist,
-    subset: () => {
-        return require(`${paths.var}/stats.json`).chars;
+    subset: file => {
+        const text = require(`${paths.var}/stats.json`).text;
+        return text[file.stem] || text.all;
     },
 });
 
@@ -129,6 +122,10 @@ const svg = require('../tasks/svg')({
 const stat = require('../tasks/stats')({
     globs: [`${paths.src}/*.html`],
     var: paths.var,
+    selectors: {
+        'droidserif-regular': '.f-droid',
+        'bitter_wght': '.f-bitter',
+    },
 });
 
 const main = series(

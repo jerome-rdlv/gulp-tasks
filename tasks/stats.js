@@ -8,10 +8,10 @@ const defaults = {
     exclude: 'script,noscript',
 };
 
-function generateTable(output, exclude) {
+function generateTable(output, exclude, selectors) {
     const classes = new Set();
     const ids = new Set();
-    let chars = '';
+    const text = {all: ''};
 
     function eachFile(file, encoding, callback) {
         const html = file.contents.toString();
@@ -27,17 +27,29 @@ function generateTable(output, exclude) {
 
         // clean then count chars
         dom.window.document.querySelectorAll(exclude).forEach(node => node.remove());
-        chars += dom.window.document.body.textContent;
+        text.all += dom.window.document.body.textContent;
+
+        // count chars for specific selectors
+        Object.entries(selectors || {}).forEach(([key, selector]) => {
+            // noinspection JSCheckFunctionSignatures
+            dom.window.document.querySelectorAll(selector).forEach(node => {
+                text[key] = (text[key] || '') + node.textContent;
+            });
+        });
 
         callback();
     }
 
     function endStream(callback) {
         try {
+            // get unique char lists
+            Object.keys(text).forEach(key => {
+                text[key] = Array.from(new Set(text[key])).sort((a, b) => a.codePointAt(0) - b.codePointAt(0)).join('');
+            });
             this.push(new Vinyl({
                 path: output,
                 contents: Buffer.from(JSON.stringify({
-                    chars: Array.from(new Set(chars)).sort((a, b) => a.codePointAt(0) - b.codePointAt(0)).join(''),
+                    text: text,
                     classes: Array.from(classes),
                     ids: Array.from(ids),
                 }, null, '\t'), 'utf8')
@@ -55,7 +67,7 @@ module.exports = function (config) {
     config = {...defaults, ...config};
     const main = function () {
         return gulp.src(config.globs)
-            .pipe(generateTable(config.output, config.exclude))
+            .pipe(generateTable(config.output, config.exclude, config.selectors))
             .pipe(gulp.dest(config.var))
             .pipe(touch());
     };
