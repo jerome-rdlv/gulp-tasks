@@ -56,7 +56,7 @@ module.exports = function (config) {
             .pipe(rename(path => path.extname = path.extname.replace('scss', 'css')))
             .pipe(postcss(plugins));
 
-        (config.splits || []).forEach(split => task = task.pipe(split.call()));
+        (config.splits || []).forEach(split => task = task.pipe(split));
 
         task = task.pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.dist))

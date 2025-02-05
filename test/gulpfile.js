@@ -109,8 +109,12 @@ const scss = require('../tasks/scss')({
         ],
     },
     splits: [
+        require('../lib/css-font-metadata')(`fonts.json`),
         require('../lib/css-split-print-screen')(file => file.basename === 'main.css'),
-        require('../lib/css-split-fonts')(file => file.basename === 'main.css'),
+        require('../lib/css-split-fonts')({
+            remove: false,
+            filter: file => file.basename === 'main.css'
+        }),
         require('../lib/css-split-mobile-desktop')({
             // Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
             breakpoint: 26,
