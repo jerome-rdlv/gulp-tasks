@@ -5,14 +5,16 @@ const Vinyl = require('vinyl');
 
 const defaults = {
     output: 'stats.json',
+    exclude: 'script,noscript',
 };
 
-function generateTable(output) {
+function generateTable(output, exclude) {
     const classes = new Set();
     const ids = new Set();
+    let chars = '';
 
     function eachFile(file, encoding, callback) {
-        const html = file.contents.toString(encoding);
+        const html = file.contents.toString();
         const dom = new (require('jsdom').JSDOM)(html, {
             contentType: 'text/html',
         });
@@ -22,6 +24,11 @@ function generateTable(output) {
                 classes.add(className);
             });
         }
+
+        // clean then count chars
+        dom.window.document.querySelectorAll(exclude).forEach(node => node.remove());
+        chars += dom.window.document.body.textContent;
+
         callback();
     }
 
@@ -30,9 +37,10 @@ function generateTable(output) {
             this.push(new Vinyl({
                 path: output,
                 contents: Buffer.from(JSON.stringify({
+                    chars: Array.from(new Set(chars)).sort((a, b) => a.codePointAt(0) - b.codePointAt(0)).join(''),
                     classes: Array.from(classes),
                     ids: Array.from(ids),
-                }), 'utf8')
+                }, null, '\t'), 'utf8')
             }));
             callback();
         } catch (error) {
@@ -40,15 +48,16 @@ function generateTable(output) {
         }
     }
 
-    return through.obj(eachFile, endStream);
+    return through.obj(eachFile, endStream, false);
 }
 
 module.exports = function (config) {
     config = {...defaults, ...config};
     const main = function () {
-        return gulp.src(config.globs, {base: config.base})
-            .pipe(generateTable(config.output))
-            .pipe(gulp.dest(config.var)).pipe(touch());
+        return gulp.src(config.globs)
+            .pipe(generateTable(config.output, config.exclude))
+            .pipe(gulp.dest(config.var))
+            .pipe(touch());
     };
 
     main.displayName = 'stats';
