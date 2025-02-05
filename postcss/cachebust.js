@@ -25,6 +25,9 @@ module.exports = function () {
                         return;
                     }
                     const url = node.nodes[0].value;
+                    if (/^data:/.test(url)) {
+                        return;
+                    }
                     const src = path.resolve(`${path.dirname(result.opts.to)}/${url}`);
                     if (!fs.existsSync(src)) {
                         decl.warn(result, `${url} does not exists in destination`);
