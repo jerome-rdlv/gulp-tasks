@@ -1,6 +1,5 @@
 const changed = require('gulp-changed');
 const gulp = require('gulp');
-const gulpif = require('gulp-if');
 const postcss = require('gulp-postcss');
 const rename = require('gulp-rename');
 const touch = require('../lib/touch');
@@ -30,19 +29,19 @@ module.exports = function (config) {
 
     function plugins(file) {
         return {
-            plugins: Object.values({
+            plugins: [
                 ...config.transforms,
                 ...(
                     process.env.NODE_ENV === 'production' && config.nooptims.indexOf(file.basename) === -1
                         ? config.optimizations
-                        : {}
+                        : []
                 )
-            })
+            ],
+            options: {
+                to: file.path.replace(config.base, config.dist),
+            }
         };
     }
-
-    // todo replace with postcss plugin
-    const cacheBustCssRefs = require('../lib/cachebust-css-refs').get(config);
 
     const splitPrintScreen = require('../lib/css-split-print-screen')(config.splits.print);
     const splitMobileDesktop = require('../lib/css-split-mobile-desktop')(config.splits.desktop);
@@ -59,18 +58,11 @@ module.exports = function (config) {
             .pipe(compile())
             .pipe(rename(path => path.extname = path.extname.replace('scss', 'css')))
             .pipe(postcss(plugins))
-            // todo Move to postcss plugin
-            .pipe(gulpif(
-                process.env.NODE_ENV === 'production',
-                cacheBustCssRefs()
-            ))
             .pipe(splitPrintScreen())
             .pipe(splitMobileDesktop())
-            .pipe(rename(path => path.dirname = path.dirname.replace('scss', 'css')))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.dist))
-            .pipe(touch())
-            ;
+            .pipe(touch());
     }
 
     const watch = function () {

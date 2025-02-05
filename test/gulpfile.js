@@ -61,8 +61,8 @@ const copy = require('../tasks/copy')({
 });
 
 const scss = require('../tasks/scss')({
-    base: paths.base,
-    dist: paths.dist,
+    base: `${paths.base}/scss`,
+    dist: `${paths.dist}/css`,
     ...require('../defaults/scss'),
     ...{
         // print: /main\.css$/,
