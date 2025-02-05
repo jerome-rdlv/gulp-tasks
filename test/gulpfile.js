@@ -99,9 +99,7 @@ const scss = require('../tasks/scss')({
     ...require('../defaults/scss'),
     ...{
         // print: /main\.css$/,
-        nooptims: [
-            'editor.css',
-        ],
+        optimize: file => file.basename !== 'editor.css',
         globs: [
             `${paths.src}/scss/**/*.scss`,
         ],
@@ -109,7 +107,16 @@ const scss = require('../tasks/scss')({
             `${paths.var}/_svg.scss`,
             path.resolve(paths.src + '/../blocks') + '/**/*.scss',
         ],
-    }
+    },
+    splits: [
+        require('../lib/css-split-print-screen')(file => file.basename === 'main.css'),
+        require('../lib/css-split-fonts')(file => file.basename === 'main.css'),
+        require('../lib/css-split-mobile-desktop')({
+            // Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
+            breakpoint: 26,
+            filter: file => file.basename === 'main.css',
+        }),
+    ],
 });
 
 const svg = require('../tasks/svg')({

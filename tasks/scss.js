@@ -32,7 +32,7 @@ module.exports = function (config) {
             plugins: [
                 ...config.transforms,
                 ...(
-                    process.env.NODE_ENV === 'production' && config.nooptims.indexOf(file.basename) === -1
+                    process.env.NODE_ENV === 'production' && (!config.optimize || config.optimize(file))
                         ? config.optimizations
                         : []
                 )
@@ -43,26 +43,26 @@ module.exports = function (config) {
         };
     }
 
-    const splitPrintScreen = require('../lib/css-split-print-screen')(config.splits.print);
-    const splitMobileDesktop = require('../lib/css-split-mobile-desktop')(config.splits.desktop);
-
     const watchGlobs = [].concat(config.globs, config.watch || []);
 
     const globs = config.globs;
     globs.push('!**/_*.scss');
 
     function main() {
-        return gulp.src(globs, {base: config.base})
+        let task = gulp.src(globs, {base: config.base})
             .pipe(changed(config.dist))
             .pipe(sourcemaps.init())
             .pipe(compile())
             .pipe(rename(path => path.extname = path.extname.replace('scss', 'css')))
-            .pipe(postcss(plugins))
-            .pipe(splitPrintScreen())
-            .pipe(splitMobileDesktop())
-            .pipe(sourcemaps.write('.'))
+            .pipe(postcss(plugins));
+
+        (config.splits || []).forEach(split => task = task.pipe(split.call()));
+
+        task = task.pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.dist))
             .pipe(touch());
+
+        return task;
     }
 
     const watch = function () {
