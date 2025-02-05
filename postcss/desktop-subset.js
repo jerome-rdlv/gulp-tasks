@@ -26,7 +26,7 @@ exports.extract = function (breakpoint) {
     return {
         postcssPlugin: 'extract-desktop',
         AtRule(rule) {
-            isDesktopRule(rule, breakpoint) || rule.remove();
+            rule.name === 'charset' || isDesktopRule(rule, breakpoint) || rule.remove();
         },
         Rule(rule) {
             let parent = rule.parent;
