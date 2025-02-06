@@ -2,10 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const valueParser = require('postcss-value-parser');
 
-module.exports = function () {
-
-    const cacheBustUrl = require('../lib/cachebust-url').get();
-    const getFileSignature = require('../lib/get-file-signature').get();
+module.exports = function (cacheBustUrl, getFileSignature) {
 
     const props = new RegExp(`^(${[
         'background',

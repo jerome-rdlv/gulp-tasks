@@ -5,29 +5,25 @@ const rename = require('gulp-rename');
 const touch = require('../lib/touch');
 const sourcemaps = require('gulp-sourcemaps');
 
+function renameFile(file) {
+    file.extname = file.extname.replace('scss', 'css');
+    file.dirname = file.dirname.replace('scss', 'css');
+}
+
 module.exports = function (config) {
 
     function compile() {
         switch (config.engine) {
             case 'dart':
-                return require('gulp-exec')(
-                    file => `/usr/bin/sass --silence-deprecation=mixed-decls "${file.path}"`,
-                    {
-                        continueOnError: false,
-                        pipeStdout: true
-                    }
-                ).on('error', console.log);
+                return require('../transforms/sass-dart')();
             default:
-                const sass = require('gulp-sass')(require('sass'));
-                return sass({
-                    outputStyle: 'expanded',
-                    precision: 8,
-                    silenceDeprecations: ['mixed-decls'],
-                }, false).on('error', sass.logError);
+                return require('../transforms/sass-js')();
         }
     }
 
     function plugins(file) {
+        const clone = file.clone({deep: false, contents: false});
+        renameFile(clone);
         return {
             plugins: [
                 ...config.transforms,
@@ -38,7 +34,8 @@ module.exports = function (config) {
                 )
             ],
             options: {
-                to: file.path.replace(config.base, config.dist),
+                // from: file.path,
+                to: clone.path,
             }
         };
     }
@@ -53,8 +50,8 @@ module.exports = function (config) {
             .pipe(changed(config.dist))
             .pipe(sourcemaps.init())
             .pipe(compile())
-            .pipe(rename(path => path.extname = path.extname.replace('scss', 'css')))
-            .pipe(postcss(plugins));
+            .pipe(postcss(plugins))
+            .pipe(rename(renameFile));
 
         (config.splits || []).forEach(split => task = task.pipe(split));
 
