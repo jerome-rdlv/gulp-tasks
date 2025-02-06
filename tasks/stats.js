@@ -8,10 +8,23 @@ const defaults = {
     exclude: 'script,noscript',
 };
 
-function generateTable(output, exclude, selectors) {
+function getText(nodes, properties) {
+    const text = Array.prototype.map.call(nodes, node => node.textContent).join('');
+    switch (properties['text-transform']) {
+        case 'lowercase':
+            return text.toLowerCase();
+        case 'uppercase':
+            return text.toUpperCase();
+        default:
+            return text;
+    }
+}
+
+function generateTable(output, exclude, fonts) {
     const classes = new Set();
     const ids = new Set();
     const text = {all: ''};
+    const table = {};
 
     function eachFile(file, encoding, callback) {
         const html = file.contents.toString();
@@ -30,10 +43,15 @@ function generateTable(output, exclude, selectors) {
         text.all += dom.window.document.body.textContent;
 
         // count chars for specific selectors
-        Object.entries(selectors || {}).forEach(([key, selector]) => {
-            // noinspection JSCheckFunctionSignatures
-            dom.window.document.querySelectorAll(selector).forEach(node => {
-                text[key] = (text[key] || '') + node.textContent;
+        // Object.entries(selectors || {}).forEach(([key, selectors]) => {
+        fonts.forEach(({family, selectors, fonts}) => {
+            selectors.forEach(([selector, properties]) => {
+                // noinspection JSCheckFunctionSignatures
+                text[family] = (text[family] || '') + getText(dom.window.document.querySelectorAll(selector), properties);
+            });
+
+            fonts.forEach(font => {
+                table[font.key] = family;
             });
         });
 
@@ -49,6 +67,7 @@ function generateTable(output, exclude, selectors) {
             this.push(new Vinyl({
                 path: output,
                 contents: Buffer.from(JSON.stringify({
+                    table: table,
                     text: text,
                     classes: Array.from(classes),
                     ids: Array.from(ids),
