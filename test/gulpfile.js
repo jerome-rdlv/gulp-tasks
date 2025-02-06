@@ -117,6 +117,10 @@ const scss = (() => {
         const plugins = [
             require('postcss-pxtorem')(require('../defaults/pxtorem')),
             require('postcss-preset-env'),
+            require('../postcss/font-fallback')({
+                'droid': ['Georgia', 'Times New Roman', 'Noto Serif'],
+                'bitter': 'serif',
+            }),
         ];
 
         if (process.env.NODE_ENV === 'production') {
