@@ -87,8 +87,9 @@ module.exports = function (config) {
     const main = function () {
         return gulp.src(config.globs)
             .pipe(generateTable(config.output, config.exclude, config.selectors))
+            .pipe(touch())
             .pipe(gulp.dest(config.var))
-            .pipe(touch());
+            ;
     };
 
     main.displayName = 'stats';

@@ -11,8 +11,9 @@ module.exports = function ({globs, base, dist}) {
             encoding: false,
         })
             .pipe(changed(dist))
+            .pipe(touch())
             .pipe(gulp.dest(dist))
-            .pipe(touch());
+            ;
     }
 
     function watch() {

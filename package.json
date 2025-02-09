@@ -17,7 +17,6 @@
         "babel-loader": "^9.1",
         "browser-sync": "^2.27",
         "core-js": "^3.22",
-        "critical": "^4.0",
         "css-font-face-src": "^2.0",
         "css-mediaquery": "^0.1",
         "cssnano": "^7.0",
@@ -38,6 +37,7 @@
         "gulp-postcss": "^10.0",
         "gulp-rename": "^1.2",
         "gulp-sass": "^5.0",
+        "gulp-sort": "^2.0.0",
         "gulp-sourcemaps": "^3.0.0",
         "gulp-terser": "^2.1",
         "jsdom": "^24.1",
@@ -59,10 +59,7 @@
         "vinyl": "^2.1",
         "vinyl-fs": "^4.0",
         "vinyl-named": "^1.1",
-        "vinyl-sourcemaps-apply": "^0.2.1",
-        "webpack": "^5.94",
-        "webpack-bundle-analyzer": "^4.9",
-        "webpack-stream": "^7.0"
+        "vinyl-sourcemaps-apply": "^0.2.1"
     },
     "devDependencies": {
         "@csstools/postcss-minify": "^1.1",
@@ -71,5 +68,11 @@
         "globals": "^15.8",
         "undertaker-registry": "^2.0",
         "yargs": "^17.7"
+    },
+    "peerDependencies": {
+        "critical": "^4.0",
+        "webpack": "^5.94",
+        "webpack-bundle-analyzer": "^4.9",
+        "webpack-stream": "^7.0"
     }
 }

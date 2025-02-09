@@ -17,8 +17,9 @@ module.exports = function ({globs, base, dist, subset}) {
         })
             .pipe(gulpif(!prod, changed(dist)))
             .pipe(gulpif(prod, fontsubset(subset)))
+            .pipe(touch())
             .pipe(gulp.dest(dist))
-            .pipe(touch());
+        ;
     }
 
     function watch() {

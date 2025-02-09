@@ -11,8 +11,6 @@ const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
 const browserSync = require('browser-sync');
 const gulp = require('gulp');
-const sourcemaps = require('gulp-sourcemaps');
-const postcss = require('gulp-postcss');
 
 const paths = {
     src: `${__dirname}/src`,
@@ -22,24 +20,92 @@ const paths = {
 
 const argv = yargs(hideBin(process.argv)).parse();
 
-const clean = require('../tasks/clean')([
-    `${paths.var}/*`,
-    `${paths.dist}/*`,
-    `!${paths.dist}/report.html`,
-]);
+const clean = (() => {
+    function main() {
+        return gulp
+            .src(
+                [
+                    `${paths.var}/*`,
+                    `${paths.dist}/*`,
+                ],
+                {
+                    allowEmpty: true,
+                    dot: true,
+                    read: false
+                }
+            )
+            .pipe(require('gulp-sort')())
+            .pipe(require('gulp-clean')());
+    }
 
-const critical = require('../tasks/critical')({
-    dist: `${paths.dist}/css/critical`,
-    entries: [
-        {name: 'front-page.php', url: argv['url']},
-    ],
-});
+    main.displayName = 'clean';
+    return main;
+})();
 
-const img = require('../tasks/img')({
-    globs: `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`,
-    base: paths.src,
-    dist: paths.dist
-});
+const criticalLocal = (() => {
+    function main() {
+        return gulp.src([
+            `${paths.dist}/**/*.html`,
+            `!${paths.dist}/report.html`,
+        ])
+            .pipe(require('../lib/critical-inline')(require('../defaults/critical')))
+            .pipe(gulp.dest(paths.dist))
+            ;
+    }
+
+    main.displayName = 'critical:local';
+    return main;
+})();
+
+const criticalRemote = (() => {
+    function main() {
+        return require('../lib/critical-extract')(
+            {
+                'front.css': 'https://rue-de-la-vieille.fr',
+                'portfolio.css': 'https://rue-de-la-vieille.fr/portfolio/',
+                'integration.css': 'https://rue-de-la-vieille.fr/integrateur-responsive/',
+                'wordpress.css': 'https://rue-de-la-vieille.fr/developpeur-wordpress/',
+                'symfony.css': 'https://rue-de-la-vieille.fr/developpeur-symfony/',
+            },
+            require('../defaults/critical')
+        )
+            .pipe(gulp.dest(`${paths.dist}/css/critical`))
+            ;
+    }
+
+    main.displayName = 'critical:remote';
+    return main;
+})();
+
+const img = (() => {
+    const main = function () {
+
+        const imagemin = require('gulp-imagemin');
+        const resize = require('gulp-image-resize');
+
+        return gulp.src(`${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`, {
+            base: paths.src,
+            encoding: false,
+        })
+            .pipe(changed(paths.dist))
+            .pipe(resize({
+                quality: 0.85
+            }))
+            .pipe(imagemin(require('../defaults/imagemin'), {verbose: false}))
+            .pipe(touch())
+            .pipe(gulp.dest(paths.dist))
+            ;
+    };
+
+    const watch = function () {
+        return gulp.watch(globs, main);
+    };
+
+    main.displayName = 'img';
+    watch.displayName = 'img:watch';
+
+    return {main, watch}
+})();
 
 const browsersync = function () {
     return new Promise(function (resolve) {
@@ -99,14 +165,16 @@ const font = require('../tasks/font')({
     },
 });
 
-const factory = require('../lib/factory');
-const cachebustUrl = factory(() => require('../lib/cachebust-url')());
-const getFileSignature = factory(() => require('../lib/get-file-signature')());
+const cachebustUrl = require('../lib/cachebust-url')();
+const getFileSignature = require('../lib/get-file-signature')();
 
 const scss = (() => {
     function main(done) {
 
-        const scssToCss = require('../lib/scss-to-css');
+        const sourcemaps = require('gulp-sourcemaps');
+        const postcss = require('gulp-postcss');
+
+        const renameScssToCss = require('../lib/scss-to-css');
 
         const plugins = [
             require('postcss-pxtorem')(require('../defaults/pxtorem')),
@@ -120,18 +188,21 @@ const scss = (() => {
         if (process.env.NODE_ENV === 'production') {
             // noinspection JSCheckFunctionSignatures
             plugins.push(...[
-                require('../postcss/cachebust')(cachebustUrl(), getFileSignature()),
+                require('../postcss/cachebust')(cachebustUrl, getFileSignature),
                 require('cssnano'),
             ]);
         }
 
-        return gulp.src([`${paths.src}/scss/**/*.scss`], {base: paths.src})
+        return gulp.src([
+            `${paths.src}/scss/**/*.scss`,
+            '!**/_*.scss'
+        ], {base: paths.src})
             .pipe(changed(paths.dist))
             .pipe(sourcemaps.init())
             .pipe(require('../transforms/sass-dart')())
-            .pipe(postcss(require('../lib/postcss-config')(plugins, scssToCss)))
+            .pipe(postcss(require('../lib/postcss-config')(plugins, renameScssToCss)))
             .on('error', done)
-            .pipe(rename(scssToCss))
+            .pipe(rename(renameScssToCss))
             .pipe(require('../lib/css-font-metadata')(`../var/fonts.json`))
             .pipe(require('../lib/css-split-print-screen')(file => file.basename === 'main.css'))
             .pipe(require('../lib/css-split-fonts')({
@@ -144,8 +215,9 @@ const scss = (() => {
                 filter: file => file.basename === 'main.css',
             }))
             .pipe(sourcemaps.write('.'))
+            .pipe(touch())
             .pipe(gulp.dest(paths.dist))
-            .pipe(touch());
+            ;
     }
 
     main.displayName = 'scss';
@@ -161,36 +233,6 @@ const scss = (() => {
 
     return {main, watch};
 })();
-
-// const scss = require('../tasks/scss')({
-//     base: paths.src,
-//     dist: paths.dist,
-//     ...require('../defaults/scss'),
-//     ...{
-//         // print: /main\.css$/,
-//         optimize: file => file.basename !== 'editor.css',
-//         globs: [
-//             `${paths.src}/scss/**/*.scss`,
-//         ],
-//         watch: [
-//             `${paths.var}/_svg.scss`,
-//             path.resolve(paths.src + '/../blocks') + '/**/*.scss',
-//         ],
-//     },
-//     splits: [
-//         require('../lib/css-font-metadata')(`fonts.json`),
-//         require('../lib/css-split-print-screen')(file => file.basename === 'main.css'),
-//         require('../lib/css-split-fonts')({
-//             remove: false,
-//             filter: file => file.basename === 'main.css'
-//         }),
-//         require('../lib/css-split-mobile-desktop')({
-//             // Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
-//             breakpoint: 26,
-//             filter: file => file.basename === 'main.css',
-//         }),
-//     ],
-// });
 
 const svg = require('../tasks/svg')({
     globs: [`${paths.src}/svg/**/*.svg`],
@@ -221,7 +263,8 @@ watch.displayName = 'default:watch';
 module.exports = [
     browsersync,
     clean,
-    critical,
+    criticalLocal,
+    criticalRemote,
     copy.main,
     copy.watch,
     font.main,

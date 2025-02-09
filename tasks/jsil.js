@@ -13,8 +13,8 @@ module.exports = function ({globs, base, dist}) {
         return gulp.src(globs, {base: base})
             .pipe(eslint())
             .pipe(gulpif(process.env.NODE_ENV === 'production', terser()))
-            .pipe(gulp.dest(dist))
             .pipe(touch())
+            .pipe(gulp.dest(dist))
             ;
     };
 

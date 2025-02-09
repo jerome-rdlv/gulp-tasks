@@ -16,8 +16,9 @@ module.exports = function ({globs, base, dist}) {
                 quality: 0.85
             }))
             .pipe(imagemin(imageminOptions, {verbose: false}))
-            .pipe(gulp.dest(dist)).pipe(touch());
-
+            .pipe(touch())
+            .pipe(gulp.dest(dist))
+        ;
     };
 
     const watch = function () {

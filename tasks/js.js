@@ -84,10 +84,9 @@ module.exports = function ({globs, base, dist}) {
                 config: webpackConfig,
             }))
             .pipe(gulpif(process.env.NODE_ENV === 'production', terser()))
-            .pipe(gulp.dest(dist, {
-                sourcemaps: true
-            }))
-            .pipe(touch());
+            .pipe(touch())
+            .pipe(gulp.dest(dist, {sourcemaps: true}))
+            ;
     }
 
     function watch(cb) {

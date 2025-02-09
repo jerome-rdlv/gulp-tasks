@@ -57,9 +57,11 @@ module.exports = function (config) {
             .pipe(cacheBustSvgRefs())
             .pipe(svgo(svgoConfigCallback))
             .pipe(cleanSvg())
-            .pipe(gulp.dest(config.var)).pipe(touch())
+            .pipe(touch())
+            .pipe(gulp.dest(config.var))
             .pipe(clearSvgParams())
-            .pipe(gulp.dest(config.dist)).pipe(touch());
+            .pipe(gulp.dest(config.dist))
+        ;
     };
 
     main.displayName = 'svg';
@@ -78,8 +80,9 @@ module.exports = function (config) {
                 template: tpl,
                 output: '_svg.scss'
             }))
+            .pipe(touch())
             .pipe(gulp.dest(config.var))
-            .pipe(touch());
+            ;
     };
 
     scss.displayName = 'svg:scss';
@@ -93,8 +96,9 @@ module.exports = function (config) {
             .pipe(rename(function (path) {
                 path.extname = '.symbol.svg';
             }))
+            .pipe(touch())
             .pipe(gulp.dest(config.dist))
-            .pipe(touch());
+            ;
     };
 
     symbol.displayName = 'svg:symbol';
