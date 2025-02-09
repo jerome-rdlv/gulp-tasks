@@ -9,7 +9,6 @@ const touch = require('../lib/touch');
 const {series, parallel} = require('gulp');
 const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
-const path = require('path');
 const browserSync = require('browser-sync');
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
@@ -44,6 +43,7 @@ const img = require('../tasks/img')({
 
 const browsersync = function () {
     return new Promise(function (resolve) {
+        // noinspection JSUnusedGlobalSymbols
         browserSync.create('rdlv.www').init({
             // see https://browsersync.io/docs/options
             server: paths.dist,
@@ -100,14 +100,8 @@ const font = require('../tasks/font')({
 });
 
 const factory = require('../lib/factory');
-
-const cachebustUrl = factory(function () {
-    return require('../lib/cachebust-url').get();
-});
-
-const getFileSignature = factory(function () {
-    return require('../lib/get-file-signature').get();
-});
+const cachebustUrl = factory(() => require('../lib/cachebust-url')());
+const getFileSignature = factory(() => require('../lib/get-file-signature')());
 
 const scss = (() => {
     function main(done) {
