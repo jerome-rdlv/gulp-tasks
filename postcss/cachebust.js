@@ -7,17 +7,17 @@ module.exports = function () {
     const cacheBustUrl = require('../lib/cachebust-url').get();
     const getFileSignature = require('../lib/get-file-signature').get();
 
-    const props = new RegExp(`${[
+    const props = new RegExp(`^(${[
         'background',
         'background-image',
         'border-image',
         'behavior',
         'src',
-    ].join('|')}`);
+    ].join('|')})$`);
 
     return {
         postcssPlugin: 'cachebust',
-        Once(root, {result}) {
+        OnceExit(root, {result}) {
             root.walkDecls(props, decl => {
                 const parsed = valueParser(decl.value);
                 parsed.walk(node => {
