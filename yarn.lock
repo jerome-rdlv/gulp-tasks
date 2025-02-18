@@ -1120,7 +1120,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capsizecss/unpack@npm:^2.0.1":
+"@capsizecss/metrics@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@capsizecss/metrics@npm:3.4.0"
+  checksum: 10c0/e034779c319eed6d5eacd982457a1eab06e337e5a879668067475c38e4bb26a25c6c863983d0d4d86856ae2bd352c0607c385e2aa6739f90f22a6005e3ed3322
+  languageName: node
+  linkType: hard
+
+"@capsizecss/unpack@npm:^2.0.1, @capsizecss/unpack@npm:^2.3.0":
   version: 2.3.0
   resolution: "@capsizecss/unpack@npm:2.3.0"
   dependencies:
@@ -1847,6 +1854,8 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.24"
     "@babel/preset-env": "npm:^7.24"
+    "@capsizecss/metrics": "npm:^3.4.0"
+    "@capsizecss/unpack": "npm:^2.3.0"
     "@csstools/postcss-minify": "npm:^1.1"
     "@eslint/js": "npm:^9.7"
     autoprefixer: "npm:^10.4"
@@ -1881,6 +1890,7 @@ __metadata:
     gulp-terser: "npm:^2.1"
     jsdom: "npm:^24.1"
     lodash: "npm:^4.17.21"
+    magic-regexp: "npm:^0.8.0"
     mustache: "npm:^2.3"
     parse-css-font: "npm:^4.0.0"
     path: "npm:^0.12"
@@ -1895,6 +1905,7 @@ __metadata:
     subset-font: "npm:^2.4.0"
     svgo: "npm:^3.3"
     through2: "npm:^4.0"
+    ufo: "npm:^1.5.4"
     undertaker-registry: "npm:^2.0"
     vinyl: "npm:^2.1"
     vinyl-fs: "npm:^4.0"
@@ -1905,7 +1916,11 @@ __metadata:
     webpack-stream: "npm:^7.0"
     yargs: "npm:^17.7"
   peerDependencies:
+    "@capsizecss/metrics": "*"
+    "@capsizecss/unpack": "*"
     critical: ^4.0
+    magic-regexp: "*"
+    ufo: "*"
     webpack: ^5.94
     webpack-bundle-analyzer: ^4.9
     webpack-stream: ^7.0

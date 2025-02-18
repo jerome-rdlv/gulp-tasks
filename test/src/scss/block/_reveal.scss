@@ -1,0 +1,22 @@
+@use 'sass:math';
+
+.reveal {
+    $root: &;
+    @media screen {
+        
+        &--run {
+            transition-property: opacity, transform;
+            transition-duration: 500ms;
+            transition-timing-function: ease-out;
+        }
+
+        &-default#{&}--hidden {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        &-default#{&}-static {
+            transform: none;
+        }
+    }
+}

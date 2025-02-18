@@ -62,11 +62,15 @@
         "vinyl-sourcemaps-apply": "^0.2.1"
     },
     "devDependencies": {
+        "@capsizecss/metrics": "^3.4.0",
+        "@capsizecss/unpack": "^2.3.0",
         "@csstools/postcss-minify": "^1.1",
         "@eslint/js": "^9.7",
         "critical": "^4.0",
         "eslint": "^9.7",
         "globals": "^15.8",
+        "magic-regexp": "^0.8.0",
+        "ufo": "^1.5.4",
         "undertaker-registry": "^2.0",
         "webpack": "^5.94",
         "webpack-bundle-analyzer": "^4.9",
@@ -74,7 +78,11 @@
         "yargs": "^17.7"
     },
     "peerDependencies": {
+        "@capsizecss/metrics": "*",
+        "@capsizecss/unpack": "*",
         "critical": "^4.0",
+        "magic-regexp": "*",
+        "ufo": "*",
         "webpack": "^5.94",
         "webpack-bundle-analyzer": "^4.9",
         "webpack-stream": "^7.0"
