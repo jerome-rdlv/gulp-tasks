@@ -64,9 +64,13 @@
     "devDependencies": {
         "@csstools/postcss-minify": "^1.1",
         "@eslint/js": "^9.7",
+        "critical": "^4.0",
         "eslint": "^9.7",
         "globals": "^15.8",
         "undertaker-registry": "^2.0",
+        "webpack": "^5.94",
+        "webpack-bundle-analyzer": "^4.9",
+        "webpack-stream": "^7.0",
         "yargs": "^17.7"
     },
     "peerDependencies": {

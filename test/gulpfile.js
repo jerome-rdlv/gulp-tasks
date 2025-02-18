@@ -68,9 +68,7 @@ const criticalRemote = (() => {
                 'symfony.css': 'https://rue-de-la-vieille.fr/developpeur-symfony/',
             },
             require('../defaults/critical')
-        )
-            .pipe(gulp.dest(`${paths.dist}/css/critical`))
-            ;
+        ).pipe(gulp.dest(`${paths.dist}/css/critical`));
     }
 
     main.displayName = 'critical:remote';
@@ -78,20 +76,15 @@ const criticalRemote = (() => {
 })();
 
 const img = (() => {
+    const globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`;
+
     const main = function () {
-
-        const imagemin = require('gulp-imagemin');
-        const resize = require('gulp-image-resize');
-
-        return gulp.src(`${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`, {
+        return gulp.src(globs, {
             base: paths.src,
             encoding: false,
         })
             .pipe(changed(paths.dist))
-            .pipe(resize({
-                quality: 0.85
-            }))
-            .pipe(imagemin(require('../defaults/imagemin'), {verbose: false}))
+            .pipe(require('gulp-imagemin')(require('../defaults/imagemin'), {verbose: false}))
             .pipe(touch())
             .pipe(gulp.dest(paths.dist))
             ;

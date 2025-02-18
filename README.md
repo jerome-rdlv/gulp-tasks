@@ -8,7 +8,7 @@ Should use this to allow task reuse and configuration:
 - [x] Drop config in favor of code configuration : should allow to add new tasks, or override existing ones locally
 - [x] Move imagemin and cherio config to modules with ability to override
 - [x] Move to JSDOM and drop cheerio
-- [ ] Move cachebust-css-refs to postcss plugin (to prevent brittle regex matching)
+- [x] Move cachebust-css-refs to postcss plugin (to prevent brittle regex matching)
 - [ ] Verify gulp-sourcemaps for JS and CSS
 
 Maybe:
