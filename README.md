@@ -13,5 +13,6 @@ Should use this to allow task reuse and configuration:
 
 Maybe:
 
+- [ ] Improve testing data with real page, with simple styles and navigation
 - [ ] Use [workspaces](https://yarnpkg.com/features/workspaces) to allow separation of tasks as several packages
 - [ ] Add a build step to separate build dependencies from projects dependencies?

@@ -3,13 +3,9 @@
  *  - --url=http://example.org
  *  - --production or --prod
  */
-const changed = require('gulp-changed');
-const rename = require('gulp-rename');
-const touch = require('../lib/touch');
 const {series, parallel} = require('gulp');
 const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
-const browserSync = require('browser-sync');
 const gulp = require('gulp');
 
 const paths = {
@@ -79,6 +75,10 @@ const img = (() => {
     const globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`;
 
     const main = function () {
+
+        const changed = require('gulp-changed');
+        const touch = require('../lib/touch');
+
         return gulp.src(globs, {
             base: paths.src,
             encoding: false,
@@ -100,37 +100,122 @@ const img = (() => {
     return {main, watch}
 })();
 
-const browsersync = function () {
-    return new Promise(function (resolve) {
-        // noinspection JSUnusedGlobalSymbols
-        browserSync.create('rdlv.www').init({
-            // see https://browsersync.io/docs/options
-            server: paths.dist,
-            watch: true,
-            open: false,
-            ghostMode: false,
-            ui: false,
-            host: argv['host'] || null,
-            https: {
-                key: process.env.RDLV_DEV_KEY,
-                cert: process.env.RDLV_DEV_CERT,
-            },
-            middleware: function (req, res, next) {
-                req.url = req.url.replace(/^(.+)\.v([0-9a-z]+)\.([a-z0-9]+)(\?.*)?$/, '$1.$3');
-                return next();
-            },
-        }, resolve);
-    });
-}
-browsersync.displayName = 'browsersync';
+const browsersync = (() => {
+    const main = function () {
 
-const js = require('../tasks/js')({
-    globs: [
-        `${paths.src}/js/main.js`,
-    ],
-    base: paths.src,
-    dist: paths.dist
-});
+        return new Promise(function (resolve) {
+            // noinspection JSUnusedGlobalSymbols
+            require('browser-sync').create('rdlv.www').init({
+                // see https://browsersync.io/docs/options
+                server: paths.dist,
+                watch: true,
+                open: false,
+                ghostMode: false,
+                ui: false,
+                host: argv['host'] || null,
+                https: {
+                    key: process.env.DEV_KEY,
+                    cert: process.env.DEV_CERT,
+                },
+                middleware: function (req, res, next) {
+                    // handle cachebust rewrite to support watching in production mode
+                    req.url = req.url.replace(/^(.+)\.v([0-9a-z]+)\.([a-z0-9]+)(\?.*)?$/, '$1.$3');
+                    return next();
+                },
+            }, resolve);
+        });
+    }
+    main.displayName = 'browsersync';
+    return main;
+})();
+
+const js = (() => {
+
+    const globs = `${paths.src}/js/main.js`;
+    const production = process.env.NODE_ENV === 'production';
+
+    const named = require('vinyl-named');
+    const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+    const ESLintPlugin = require('eslint-webpack-plugin');
+    const webpack = require('webpack-stream');
+
+    function main(done, watch) {
+        const touch = require('../lib/touch');
+        return gulp.src(globs, {
+            base: paths.src,
+            sourcemaps: true,
+        })
+            .pipe(named(function (file) {
+                // chunk name
+                return file.relative.substring(0, file.relative.length - file.extname.length);
+            }))
+            .pipe(webpack({
+                watch: !!watch,
+                config: {
+                    target: 'web',
+                    module: {
+                        rules: [
+                            {
+                                test: /\.m?jsx?$/,
+                                exclude: /node_modules/,
+                                use: {
+                                    loader: 'babel-loader',
+                                    options: {
+                                        exclude: 'node_modules/**',
+                                        cacheDirectory: true,
+                                        presets: [
+                                            [
+                                                "@babel/preset-env",
+                                                {
+                                                    corejs: 3.22,
+                                                    useBuiltIns: 'entry',
+                                                    modules: 'auto',
+                                                    debug: !!process.env.DEBUG
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                },
+                            },
+                            {
+                                test: /\.(txt|glsl|svg)$/i, use: 'raw-loader',
+                            },
+                        ],
+                    },
+                    watchOptions: {
+                        ignored: '/node_modules/',
+                    },
+                    devtool: production ? false : 'eval',
+                    mode: production ? 'production' : 'development',
+                    output: {
+                        filename: '[name].js'
+                    },
+                    plugins: [
+                        new ESLintPlugin({
+                            configType: 'flat',
+                        }),
+                        new BundleAnalyzerPlugin({
+                            analyzerMode: 'static',
+                            reportFilename: paths.dist + '/report.html',
+                            openAnalyzer: false,
+                        })
+                    ],
+                }
+            }))
+            .pipe(touch())
+            .pipe(gulp.dest(paths.dist, {sourcemaps: true}))
+            ;
+    }
+
+    function watch(done) {
+        return main(done, true);
+    }
+
+    main.displayName = 'js';
+    watch.displayName = 'js:watch';
+
+    return {main, watch}
+})();
 
 const jsil = require('../tasks/jsil')({
     globs: [`${paths.src}/js/inline/*.js`],
@@ -167,7 +252,10 @@ const scss = (() => {
         const sourcemaps = require('gulp-sourcemaps');
         const postcss = require('gulp-postcss');
 
+        const changed = require('gulp-changed');
+        const rename = require('gulp-rename');
         const renameScssToCss = require('../lib/scss-to-css');
+        const touch = require('../lib/touch');
 
         const plugins = [
             require('postcss-pxtorem')(require('../defaults/pxtorem')),
