@@ -17,8 +17,12 @@ const paths = {
 	var: path.resolve(`${__dirname}/../var`),
 };
 
-const cachebustUrl = require('../../lib/cachebust-url')();
-const getFileSignature = require('../../lib/get-file-signature')();
+const cachebust = ((cachebustUrl, getFileSignature) => {
+	return (url, path) => cachebustUrl(url, getFileSignature(path));
+})(
+	require('../../lib/cachebust-url')(),
+	require('../../lib/get-file-signature')()
+);
 
 
 const browsersync = require('./tasks/browsersync-serve')(paths, argv['host']);
@@ -30,13 +34,13 @@ const font = require('./tasks/font')(paths);
 const img = require('./tasks/img')(paths);
 const js = require('./tasks/js')(paths);
 const jsil = require('./tasks/jsil')(paths);
-const scss = require('./tasks/scss')(paths, cachebustUrl, getFileSignature);
-const svg = require('./tasks/svg')(paths);
+const scss = require('./tasks/scss')(paths, cachebust);
+const svg = require('./tasks/svg')(paths, cachebust);
 const stat = require('./tasks/stats')(paths);
 
 const main = series(
 	parallel(copy.main, svg.main, img.main, stat),
-	parallel(svg.symbol, svg.scss, font.main),
+	parallel(font.main),
 	parallel(jsil.main, js.main, scss.main)
 );
 main.displayName = 'default';
@@ -63,8 +67,6 @@ module.exports = [
 	scss.watch,
 	svg.main,
 	svg.watch,
-	svg.scss,
-	svg.symbol,
 	main,
 	watch,
 ];

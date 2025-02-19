@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const named = require('vinyl-named');
 const webpack = require('webpack-stream');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const touch = require('../../../lib/touch');
 
 module.exports = function (paths) {

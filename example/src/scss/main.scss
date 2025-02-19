@@ -1,0 +1,45 @@
+@font-face {
+	font-family: 'droid';
+	src: url('../font/droidserif-regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'bitter';
+	src: url('../font/bitter_wght.woff2') format('woff2');
+	font-weight: 100 1000;
+	font-style: normal;
+	font-display: swap;
+}
+
+body {
+	font-family: droid, sans-serif;
+	color: red;
+	font-size: 16px;
+
+	@media (min-width: 38em) {
+		color: blue;
+	}
+}
+
+div.image {
+	aspect-ratio: 2 / 1;
+	background: url('../img/balanin_des_noisettes.jpg') no-repeat center center;
+	background-size: cover;
+	max-width: 100%;
+	width: 20em;
+}
+
+h1 {
+	font-family: 'bitter', sans-serif;
+	color: #777;
+}
+
+@media print {
+	body {
+		background: white;
+	}
+}
+

@@ -80,12 +80,17 @@ module.exports = function (paths) {
 
 	const globs = `${paths.src}/*.html`;
 
+	// selectors: require(`${config.dist}/css/fonts.json`),
 	const main = function () {
+
 		return gulp.src(globs)
-			.pipe(generateTable('stats.json', 'script,noscript', {
-				'droidserif-regular': '.f-droid',
-				'bitter_wght': '.f-bitter',
-			}))
+			.pipe(generateTable('stats.json', 'script,noscript', (() => {
+				try {
+					return require('../../var/fonts.json');
+				} catch {
+					return [];
+				}
+			})()))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.var))
 			;
