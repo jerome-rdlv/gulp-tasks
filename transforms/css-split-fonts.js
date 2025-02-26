@@ -1,4 +1,4 @@
-const csssubset = require('./css-subset');
+const csssubset = require('../lib/css-subset');
 const Stream = require('stream');
 const {extract, drop} = require('../postcss/fonts-subset');
 

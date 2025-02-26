@@ -1,98 +1,76 @@
 const changed = require('gulp-changed');
-const cleanSvg = require('../../../lib/clean-svg');
-const clearSvgParams = require('../../../lib/clear-svg-params');
-const cacheBustSvgRefs = require('../../../lib/cachebust-svg-refs');
-const crypto = require('crypto');
+const clearSvgParams = require('../../../transforms/clear-svg-params');
+const dom = require('../../../transforms/dom');
 const fs = require('fs');
 const gulp = require('gulp');
-const path = require('path');
-const PluginError = require('plugin-error');
 const rename = require('gulp-rename');
-const svgo = require('../../../lib/svgo');
-const svgToScss = require('../../../lib/svg-to-scss');
-const svgToSymbol = require('../../../lib/svg-to-symbol');
+const svgToScss = require('../../../transforms/svg-to-scss');
 const touch = require('../../../lib/touch');
-
-function getFileSvgminConfig(file) {
-	const dom = new (require('jsdom').JSDOM)(file.contents.toString(), {
-		contentType: 'image/svg+xml',
-	});
-	const opts = dom.window.document.getElementById('svgo-options')?.innerHTML.trim();
-	return opts ? JSON.parse(opts) : [];
-}
-
-function svgoConfigCallback(file) {
-	const prefix = 'i' + crypto.createHash('sha1')
-		.update(path.basename(file.relative, path.extname(file.relative)))
-		.digest('hex')
-		.substring(0, 4);
-
-	/*
-	Configuration can be disabled in svg files
-	with following script:
-	
-		<script type="application/json" id="svgo-options">
-			[
-			"removeHiddenElems",
-			"convertPathData",
-			]
-		</script>
-	 */
-	const defaults = {...require('../../../defaults/svgo')};
-	const disabled = getFileSvgminConfig(file);
-
-	defaults.path = file.path;
-	defaults.plugins = defaults.plugins.filter(plugin => {
-		return disabled.indexOf(plugin.name) === -1;
-	});
-
-	return defaults;
-}
 
 module.exports = function (paths, cachebust) {
 
 	const globs = [`${paths.src}/svg/**/*.svg`];
 
-	const main = function () {
+	const plugins = [
+		require('../../../dom/svgo-disabled'),
+	];
 
-		return gulp.src(globs, {base: `${paths.src}/svg`})
-			.pipe(cacheBustSvgRefs(paths.dist, cachebust))
-			.pipe(svgo(svgoConfigCallback))
-			.pipe(cleanSvg())
-			.pipe(svgToScss(`${paths.src}/svg.scss.mustache`, `../../var/_svg.scss`))
+	if (process.env.NODE_ENV === 'production') {
+		plugins.push(require('../../../dom/cachebust')(cachebust, {
+			'image[href]': 'href',
+			'img[src]': 'src',
+		}));
+	}
+
+	const svgo = () => require('../../../transforms/svgo')(require('../../../lib/svgo-config')(require('../../../defaults/svgo')));
+
+	const main = function () {
+		return gulp.src(globs, {base: paths.src})
+			.pipe(changed(paths.dist))
 			.pipe(clearSvgParams())
-			.pipe(svgToSymbol())
+			.pipe(svgo())
+			.pipe(dom({plugins}))
 			.pipe(touch())
-			.pipe(gulp.dest(`${paths.dist}/svg`))
+			.pipe(gulp.dest(paths.dist))
+			// svg availability for inclusion as inline symbol in html
+			.pipe(dom({plugins: [require('../../../dom/svg-to-symbol')]}))
+			.pipe(rename(path => path.extname = '.symbol.svg'))
+			.pipe(gulp.dest(paths.dist))
 			;
 	};
 
-	main.displayName = 'svg';
+	// svg availability in SCSS
+	const scss = function () {
 
-	// svg availability for inclusion as inline symbol in html
-	// const symbol = function () {
-	// 	return gulp.src(paths.var + '/svg/**/*.svg', {base: paths.var})
-	// 		.pipe(changed(paths.dist, {extension: '.symbol.svg'}))
-	// 		.pipe(svgToSymbol())
-	// 		.pipe(clearSvgParams())
-	// 		.pipe(rename(function (path) {
-	// 			path.extname = '.symbol.svg';
-	// 		}))
-	// 		.pipe(touch())
-	// 		.pipe(gulp.dest(paths.dist))
-	// 		;
-	// };
-	//
-	// symbol.displayName = 'svg:symbol';
+		// look for template
+		let template = paths.src + '/svg.scss.mustache';
+		if (!fs.existsSync(template)) {
+			template = __dirname + '/../svg.scss.mustache';
+		}
+
+		return gulp.src(globs, {base: paths.src + '/svg'})
+			.pipe(clearSvgParams())
+			.pipe(svgo())
+			.pipe(dom({plugins}))
+			.pipe(svgToScss({
+				template: template,
+				output: '_svg.scss'
+			}))
+			.pipe(touch())
+			.pipe(gulp.dest(paths.var))
+			;
+	};
 
 	const watch = function () {
 		return gulp.watch(
-			globs.concat([`${paths.src}/svg.scss.mustache`]),
-			main
+			[...globs, `${paths.src}/svg.scss.mustache`],
+			gulp.parallel(main, scss)
 		);
 	};
 
+	main.displayName = 'svg';
+	scss.displayName = 'svg:scss';
 	watch.displayName = 'svg:watch';
 
-	return {main, watch};
+	return {main, scss, watch};
 };

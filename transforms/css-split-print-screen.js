@@ -1,5 +1,5 @@
 const Stream = require('stream');
-const csssubset = require('./css-subset');
+const csssubset = require('../lib/css-subset');
 const {extract, drop} = require('../postcss/print-subset');
 
 module.exports = function (filter) {

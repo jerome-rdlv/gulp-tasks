@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const inline = require('../../../lib/critical-inline');
+const inline = require('../../../transforms/critical-inline');
 
 module.exports = function (paths) {
 	function main() {

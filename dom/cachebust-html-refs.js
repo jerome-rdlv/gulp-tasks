@@ -1,6 +1,13 @@
 const fs = require('fs');
 const through = require('through2');
 
+/**
+ * @deprecated Replace with dom/cachebust
+ * @param dist
+ * @param cachebustUrl
+ * @param getFileSignature
+ * @returns {function(): *}
+ */
 exports.get = function (dist, cachebustUrl, getFileSignature) {
 	return function () {
 		// noinspection JSCheckFunctionSignatures

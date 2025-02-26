@@ -30,16 +30,16 @@ module.exports = function (paths, cachebust) {
 			.pipe(changed(paths.dist))
 			.pipe(sourcemaps.init())
 			.pipe(require('../../../transforms/sass-dart')())
-			.pipe(postcss(require('../../../lib/postcss-config')(plugins, renameScssToCss)))
+			.pipe(postcss(require('../../../lib/transform-config')(plugins, renameScssToCss)))
 			.on('error', done)
 			.pipe(rename(renameScssToCss))
-			.pipe(require('../../../lib/css-font-metadata')(`../var/fonts.json`))
-			.pipe(require('../../../lib/css-split-print-screen')(file => file.basename === 'main.css'))
-			.pipe(require('../../../lib/css-split-fonts')({
+			.pipe(require('../../../transforms/css-font-metadata')(`../var/fonts.json`))
+			.pipe(require('../../../transforms/css-split-print-screen')(file => file.basename === 'main.css'))
+			.pipe(require('../../../transforms/css-split-fonts')({
 				remove: false,
 				filter: file => file.basename === 'main.css'
 			}))
-			.pipe(require('../../../lib/css-split-mobile-desktop')({
+			.pipe(require('../../../transforms/css-split-mobile-desktop')({
 				// Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
 				breakpoint: 26,
 				filter: file => file.basename === 'main.css',

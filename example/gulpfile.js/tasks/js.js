@@ -7,7 +7,10 @@ const touch = require('../../../lib/touch');
 
 module.exports = function (paths) {
 
-	const globs = `${paths.src}/js/main.js`;
+	const globs = [
+		`${paths.src}/js/main.js`,
+		`${paths.src}/js/inline/*.js`,
+	];
 	const production = process.env.NODE_ENV === 'production';
 
 	function main(done, watch) {

@@ -36,13 +36,28 @@ const js = require('./tasks/js')(paths);
 const jsil = require('./tasks/jsil')(paths);
 const scss = require('./tasks/scss')(paths, cachebust);
 const svg = require('./tasks/svg')(paths, cachebust);
-const stat = require('./tasks/stats')(paths);
+const html = require('./tasks/html')(paths, cachebust);
 
-const main = series(
-	parallel(copy.main, svg.main, img.main, stat),
-	parallel(font.main),
-	parallel(jsil.main, js.main, scss.main)
-);
+const tasks = [
+	parallel(img.main, copy.main),
+	parallel(svg.main, svg.scss),
+	parallel(jsil.main, js.main, scss.main), // eleventy
+];
+
+if (process.env.NODE_ENV === 'production') {
+	const stat = require('./tasks/stats')(paths);
+	const optimize = series(
+		stat,
+		font.main,
+		// css cachebust refs
+		// cachebust
+		// html cachebust refs
+	);
+	optimize.displayName = 'optimize';
+	tasks.push(optimize);
+}
+
+const main = series(...tasks);
 main.displayName = 'default';
 
 const watch = parallel(copy.watch, svg.watch, jsil.watch, js.watch, scss.watch, font.watch);
@@ -57,6 +72,8 @@ module.exports = [
 	copy.watch,
 	font.main,
 	font.watch,
+	html.main,
+	html.watch,
 	img.main,
 	img.watch,
 	js.main,
@@ -67,6 +84,7 @@ module.exports = [
 	scss.watch,
 	svg.main,
 	svg.watch,
+	svg.scss,
 	main,
 	watch,
 ];

@@ -5,10 +5,11 @@ const PluginError = require('plugin-error');
 const through = require('through2');
 const Vinyl = require('vinyl');
 
-module.exports = function (template, output) {
+module.exports = function ({template, output}) {
 
 	if (!fs.existsSync(template)) {
-		throw new Error(`Template file ${template} does not exists`);
+		// throw new Error(`Template file ${template} does not exist`);
+		throw new PluginError('svg-to-scss', `Template file ${template} does not exists`);
 	}
 
 	template = fs.readFileSync(template, 'utf8');

@@ -1891,8 +1891,8 @@ __metadata:
     jsdom: "npm:^24.1"
     lodash: "npm:^4.17.21"
     magic-regexp: "npm:^0.8.0"
+    mime-types: "npm:^2.1.35"
     mustache: "npm:^2.3"
-    parse-css-font: "npm:^4.0.0"
     path: "npm:^0.12"
     plugin-error: "npm:^2.0"
     postcss: "npm:^8.3"
@@ -1944,7 +1944,6 @@ __metadata:
     lodash: ^4.17.21
     magic-regexp: "*"
     mustache: ^2.3
-    parse-css-font: ^4.0.0
     path: ^0.12
     plugin-error: ^2.0
     postcss: ^8.3
@@ -4436,34 +4435,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-font-size-keywords@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "css-font-size-keywords@npm:1.0.0"
-  checksum: 10c0/afc3e296a20e533da5fe84e1436914b5ec789d2db851b856688a1aa80f88c2ee408580a8a0a1e0581cc0952b65bfb37a769c841df185c7b1d95198c563996465
-  languageName: node
-  linkType: hard
-
-"css-font-stretch-keywords@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "css-font-stretch-keywords@npm:1.0.1"
-  checksum: 10c0/9f5c405c99962f2bf77ed79f9f137ac7eecbc2e0f64cfe448277af9924ec2717214369d0e9a02b4520e3e0812b6a5289fad36911678a13f5505e972889cb27a9
-  languageName: node
-  linkType: hard
-
-"css-font-style-keywords@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "css-font-style-keywords@npm:1.0.1"
-  checksum: 10c0/431bb7ee0346302abc9c94a74df0c20b8f5173ef8b29284c571bbba4eec4e22a461dcb6a7d0ae764f9b02f9a7a185612193906122c744af96eb6e4be72e646d2
-  languageName: node
-  linkType: hard
-
-"css-font-weight-keywords@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "css-font-weight-keywords@npm:1.0.0"
-  checksum: 10c0/99fbf6ca55ca86cbb083786f6ca83d47c0284eab1a96929b71401a50969e18a901474ffe8b1a895226f9bbde461c77d88ca50fcc871ce8a8926a2d2ba65bb847
-  languageName: node
-  linkType: hard
-
 "css-has-pseudo@npm:^7.0.2":
   version: 7.0.2
   resolution: "css-has-pseudo@npm:7.0.2"
@@ -4474,13 +4445,6 @@ __metadata:
   peerDependencies:
     postcss: ^8.4
   checksum: 10c0/456e9ce1eec8a535683c329956acfe53ce5a208345d7f2fcbe662626be8b3c98681e9041d7f4980316714397b0c1c3defde25653d629c396df17803d599c4edf
-  languageName: node
-  linkType: hard
-
-"css-list-helpers@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "css-list-helpers@npm:2.0.0"
-  checksum: 10c0/5a86b54ee8c78c190d2c5aafbf93b541ea36fe361d51bad69c6fc8666d0d71c31eb36dda7d0ddb4debf63581f5d6385c55522ebe1030c2fd4f47d5cccc480e35
   languageName: node
   linkType: hard
 
@@ -4541,13 +4505,6 @@ __metadata:
     domutils: "npm:1.5.1"
     nth-check: "npm:~1.0.1"
   checksum: 10c0/16e91cd4a8606e76eb2d93ded43e2d20fe315effa7e1dedf16e81fab5c6bbd18b394f78cb59c04e2dddc7d4c68e31a0617b7f4f196dff48398cf3ac83e78475c
-  languageName: node
-  linkType: hard
-
-"css-system-font-keywords@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "css-system-font-keywords@npm:1.0.0"
-  checksum: 10c0/8eb3c1d70f70f4727d273cfdc37c53cb0e312286c070f9ec1cf24b7c2602cf8b128f2a127004f1f9feca45848442ad99c22875a440457a238fcd3b9307c8f0ce
   languageName: node
   linkType: hard
 
@@ -10395,21 +10352,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse-css-font@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "parse-css-font@npm:4.0.0"
-  dependencies:
-    css-font-size-keywords: "npm:^1.0.0"
-    css-font-stretch-keywords: "npm:^1.0.1"
-    css-font-style-keywords: "npm:^1.0.1"
-    css-font-weight-keywords: "npm:^1.0.0"
-    css-list-helpers: "npm:^2.0.0"
-    css-system-font-keywords: "npm:^1.0.0"
-    unquote: "npm:^1.1.1"
-  checksum: 10c0/4fb6ee7658dc20891c26464c71cc3e5caf495ec88e22d948a35445cfce1f6b2c1a7a5f0537007869e23f8fa7d1d468e1f4bde0859231866f56445506a8c8c0f0
-  languageName: node
-  linkType: hard
-
 "parse-filepath@npm:^1.0.2":
   version: 1.0.2
   resolution: "parse-filepath@npm:1.0.2"
@@ -14012,7 +13954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unquote@npm:^1.1.1, unquote@npm:~1.1.1":
+"unquote@npm:~1.1.1":
   version: 1.1.1
   resolution: "unquote@npm:1.1.1"
   checksum: 10c0/de59fb48cbaadc636002c6563dcb6b1bce95c91ebecb92addbc9bb47982cb03e7d8a8371c9617267b9e5746bbcb4403394139bc1310106b9ac4c26790ed57859

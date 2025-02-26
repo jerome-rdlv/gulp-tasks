@@ -1,4 +1,4 @@
-const extract = require('../../../lib/critical-extract');
+const extract = require('../../../transforms/critical-extract');
 const gulp = require('gulp');
 
 module.exports = function (paths) {
