@@ -5,11 +5,13 @@ const PluginError = require('plugin-error');
 const through = require('through2');
 const Vinyl = require('vinyl');
 
-module.exports = function ({template, output}) {
+module.exports = function ({template, output} = {}) {
+	
+	template = template || `${__dirname}/../svg.scss.mustache`;
+	output = output || '_svg.scss';
 
-	if (!fs.existsSync(template)) {
-		// throw new Error(`Template file ${template} does not exist`);
-		throw new PluginError('svg-to-scss', `Template file ${template} does not exists`);
+	if (template && !fs.existsSync(template)) {
+		throw new Error(`Template file ${template} does not exist`);
 	}
 
 	template = fs.readFileSync(template, 'utf8');
@@ -30,8 +32,6 @@ module.exports = function ({template, output}) {
 	}
 
 	function eachFile(file, encoding, complete) {
-
-		this.push(file);
 
 		const svgCode = file.contents.toString();
 		const dims = getDims(svgCode);

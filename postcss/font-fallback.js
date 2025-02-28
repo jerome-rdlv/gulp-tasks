@@ -87,7 +87,7 @@ function getFont(rule, base) {
 	return font;
 }
 
-module.exports = (fallbacks = {}) => {
+module.exports = (fallbacks = {}, filter = null) => {
 
 	async function generateFallbacks(rule, {result}) {
 		const font = getFont(rule, path.dirname(result.opts.from) + '/');

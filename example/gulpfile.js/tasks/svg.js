@@ -49,7 +49,6 @@ module.exports = function (paths, cachebust) {
 		}
 
 		return gulp.src(globs, {base: paths.src + '/svg'})
-			.pipe(clearSvgParams())
 			.pipe(svgo())
 			.pipe(dom({plugins}))
 			.pipe(svgToScss({

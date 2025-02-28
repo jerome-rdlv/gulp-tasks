@@ -15,7 +15,7 @@ module.exports = function (paths, cachebust) {
 			require('../../../postcss/font-fallback')({
 				'droid': ['Georgia', 'Times New Roman', 'Noto Serif'],
 				'bitter': 'serif',
-			}),
+			}, path => /main\.css$/.test(path)),
 		];
 
 		if (process.env.NODE_ENV === 'production') {
@@ -33,7 +33,10 @@ module.exports = function (paths, cachebust) {
 			.pipe(postcss(require('../../../lib/transform-config')(plugins, renameScssToCss)))
 			.on('error', done)
 			.pipe(rename(renameScssToCss))
-			.pipe(require('../../../transforms/css-font-metadata')(`../var/fonts.json`))
+			.pipe(require('../../../transforms/css-font-metadata')({
+				output: `../var/fonts.json`,
+				filter: file => file.basename === 'main.css'
+			}))
 			.pipe(require('../../../transforms/css-split-print-screen')(file => file.basename === 'main.css'))
 			.pipe(require('../../../transforms/css-split-fonts')({
 				remove: false,

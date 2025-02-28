@@ -8,8 +8,6 @@ module.exports = function ({plugins = [], options = {}}) {
 	return through.obj(function (file, encoding, complete) {
 		const pending = [...plugins];
 
-		console.log('mime', (options.type || lookup(file.extname)) || 'text/html');
-
 		Promise.resolve()
 			.then(() => {
 				return new (require('jsdom').JSDOM)(file.contents.toString(encoding), {

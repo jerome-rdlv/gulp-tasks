@@ -15,6 +15,7 @@ module.exports = function (paths, target, host) {
 						},
 					]
 				},
+				files: [`${paths.dist}/**/*.{js,css,woff2}`],
 				ghostMode: false,
 				open: false,
 				ui: false,

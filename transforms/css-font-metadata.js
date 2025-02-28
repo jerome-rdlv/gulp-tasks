@@ -2,11 +2,16 @@ const postcss = require('postcss');
 const through = require('through2');
 const Vinyl = require('vinyl');
 
-module.exports = function (output, aliases = {}) {
+module.exports = function ({output, aliases = {}, filter}) {
 
 	const fontMetadata = require('../postcss/font-metadata')(aliases);
 
 	function eachFile(file, encoding, complete) {
+
+		if (filter && !filter(file)) {
+			return complete(null, file);
+		}
+		
 		postcss([fontMetadata])
 			.process(file.contents, {from: file.path})
 			.then(() => complete(null, file))
