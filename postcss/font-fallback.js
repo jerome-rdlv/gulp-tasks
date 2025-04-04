@@ -90,6 +90,10 @@ function getFont(rule, base) {
 module.exports = (fallbacks = {}, filter = null) => {
 
 	async function generateFallbacks(rule, {result}) {
+		if (filter && !filter(result.opts.to)) {
+			return;
+		}
+
 		const font = getFont(rule, path.dirname(result.opts.from) + '/');
 		if (!font) {
 			// no font found
