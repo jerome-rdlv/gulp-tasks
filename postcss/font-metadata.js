@@ -52,7 +52,7 @@ module.exports = function (aliases) {
 				rule.walkDecls(props, decl => {
 					switch (decl.prop) {
 						case 'font-family':
-							font.family = decl.value;
+							font.family = decl.value.replaceAll('"', '');
 							return;
 						case 'font-weight':
 						case 'font-style':
