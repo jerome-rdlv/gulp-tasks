@@ -17,7 +17,7 @@
  *   </script>
  *
  */
-module.exports = function svgoDisabled ({document, file}) {
+module.exports = function svgoDisabled({document, file}) {
 
 	// create property for later detection anyway
 	file.svgo = null;

@@ -87,6 +87,9 @@ module.exports = function (aliases) {
 				if (decl.parent && decl.parent.type === 'atrule' && decl.parent.name === 'font-face') {
 					return;
 				}
+				if (!decl.parent.selector) {
+					return;
+				}
 				const properties = getProperties(decl.parent);
 				const parsed = valueParser(decl.value);
 				parsed.walk(value => {
@@ -100,14 +103,15 @@ module.exports = function (aliases) {
 					if (!metadata[family].selectors) {
 						metadata[family].selectors = [];
 					}
+					const selector = decl.parent.selector.replace(/\s+/g, ' ');
 					// try to add to an existing selector with same properties
 					for (const item of metadata[family].selectors) {
 						if (isEqual(item[1], properties)) {
-							item[0] += ',' + decl.parent.selector;
+							item[0] += ',' + selector;
 							return;
 						}
 					}
-					metadata[family].selectors.push([decl.parent.selector, properties]);
+					metadata[family].selectors.push([selector, properties]);
 				});
 			},
 		},

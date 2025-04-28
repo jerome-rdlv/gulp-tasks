@@ -1,13 +1,13 @@
 module.exports = {
-    rootValue: 16,
-    propList: [
-        '*',
-        '!--height-adminbar',
-        '!--px-*',
-    ],
-    selectorBlackList: [],
-    replace: true,
-    mediaQuery: false,
-    // should be kept above 0 because 0px is needed for custom-properties to work
-    minPixelValue: 1,
+	rootValue: 16,
+	propList: [
+		'*',
+		'!--height-adminbar',
+		'!--px-*',
+	],
+	selectorBlackList: [],
+	replace: true,
+	mediaQuery: false,
+	// should be kept above 0 because 0px is needed for custom-properties to work
+	minPixelValue: 1,
 };
