@@ -22,7 +22,6 @@ const generics = {
 const overrides = ['font-stretch', 'font-weight', 'size-adjust', 'ascent-override', 'descent-override', 'line-gap-override'];
 
 const metricsCache = {};
-const handled = {};
 
 async function getMetricsForFamily(family) {
 	try {
@@ -88,6 +87,8 @@ function getFont(rule, base) {
 }
 
 module.exports = (fallbacks = {}, filter = null) => {
+
+	const handled = {};
 
 	async function generateFallbacks(rule, {result}) {
 		if (filter && !filter(result.opts.to)) {
