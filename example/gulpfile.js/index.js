@@ -27,14 +27,19 @@ const cachebust = ((cachebustUrl, getFileSignature) => {
 
 const browsersync = require('../../tasks/browsersync-serve')(paths, argv['host']);
 const clean = require('../../tasks/clean')(paths);
-const copy = require('../../tasks/copy')(paths);
+const copy = require('../../tasks/copy')(paths, [
+	`${paths.src}/*.html`,
+]);
 const criticalLocal = require('../../tasks/critical-local')(paths);
 const criticalRemote = require('../../tasks/critical-remote')(paths);
 const font = require('../../tasks/font')(paths);
 const img = require('../../tasks/img')(paths);
 const js = require('../../tasks/js')(paths);
 const jsil = require('../../tasks/jsil')(paths);
-const scss = require('../../tasks/scss')(paths, cachebust);
+const scss = require('../../tasks/scss')(paths, cachebust, {
+	'droid': ['Georgia', 'Times New Roman', 'Noto Serif'],
+	'bitter': 'serif',
+});
 const svg = require('../../tasks/svg')(paths, cachebust);
 const html = require('../../tasks/html')(paths, cachebust);
 

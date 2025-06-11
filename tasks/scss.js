@@ -6,16 +6,13 @@ const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
 const touch = require('../lib/touch');
 
-module.exports = function (paths, cachebust) {
+module.exports = function (paths, cachebust, fonts) {
 	function main(done) {
 
 		const plugins = [
 			require('postcss-pxtorem')(require('../defaults/pxtorem')),
 			require('postcss-preset-env'),
-			require('../postcss/font-fallback')({
-				'droid': ['Georgia', 'Times New Roman', 'Noto Serif'],
-				'bitter': 'serif',
-			}, path => /main\.css$/.test(path)),
+			require('../postcss/font-fallback')(fonts, path => /main\.css$/.test(path)),
 		];
 
 		if (process.env.NODE_ENV === 'production') {
