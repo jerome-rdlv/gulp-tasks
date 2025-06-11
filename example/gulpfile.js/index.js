@@ -18,25 +18,25 @@ const paths = {
 };
 
 const cachebust = ((cachebustUrl, getFileSignature) => {
-	return (url, path) => cachebustUrl(url, getFileSignature(path));
+	return (url, path) => cachebustUrl.add(url, getFileSignature(path));
 })(
 	require('../../lib/cachebust-url')(),
 	require('../../lib/get-file-signature')()
 );
 
 
-const browsersync = require('./tasks/browsersync-serve')(paths, argv['host']);
-const clean = require('./tasks/clean')(paths);
-const copy = require('./tasks/copy')(paths);
-const criticalLocal = require('./tasks/critical-local')(paths);
-const criticalRemote = require('./tasks/critical-remote')(paths);
-const font = require('./tasks/font')(paths);
-const img = require('./tasks/img')(paths);
-const js = require('./tasks/js')(paths);
-const jsil = require('./tasks/jsil')(paths);
-const scss = require('./tasks/scss')(paths, cachebust);
-const svg = require('./tasks/svg')(paths, cachebust);
-const html = require('./tasks/html')(paths, cachebust);
+const browsersync = require('../../tasks/browsersync-serve')(paths, argv['host']);
+const clean = require('../../tasks/clean')(paths);
+const copy = require('../../tasks/copy')(paths);
+const criticalLocal = require('../../tasks/critical-local')(paths);
+const criticalRemote = require('../../tasks/critical-remote')(paths);
+const font = require('../../tasks/font')(paths);
+const img = require('../../tasks/img')(paths);
+const js = require('../../tasks/js')(paths);
+const jsil = require('../../tasks/jsil')(paths);
+const scss = require('../../tasks/scss')(paths, cachebust);
+const svg = require('../../tasks/svg')(paths, cachebust);
+const html = require('../../tasks/html')(paths, cachebust);
 
 const tasks = [
 	parallel(img.main, copy.main),
@@ -45,7 +45,7 @@ const tasks = [
 ];
 
 if (process.env.NODE_ENV === 'production') {
-	const stat = require('./tasks/stats')(paths);
+	const stat = require('../../tasks/stats')(paths);
 	const optimize = series(
 		stat,
 		font.main,

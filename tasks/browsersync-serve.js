@@ -1,5 +1,5 @@
 const browsersync = require('browser-sync');
-const cachebustRewrite = require('../../../lib/cachebust-rewrite');
+const cachebustRewrite = require('../lib/cachebust-rewrite');
 
 module.exports = function (paths, host = null) {
 	const main = function () {

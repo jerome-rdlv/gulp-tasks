@@ -1,14 +1,14 @@
 const gulp = require('gulp');
-const touch = require('../../../lib/touch');
-const dom = require('../../../transforms/dom');
+const touch = require('../lib/touch');
+const dom = require('../transforms/dom');
 
 module.exports = function (paths, cachebust) {
 
 	const globs = `${paths.dist}/*.html`;
 
 	const plugins = [
-		require('../../../dom/inline-script'),
-		require('../../../dom/media-script'),
+		require('../dom/inline-script'),
+		require('../dom/media-script'),
 	];
 
 	function main() {

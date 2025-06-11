@@ -1,8 +1,8 @@
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const changed = require('gulp-changed');
-const fontsubset = require('../../../transforms/font-subset');
-const touch = require('../../../lib/touch');
+const fontsubset = require('../transforms/font-subset');
+const touch = require('../lib/touch');
 
 module.exports = (paths) => {
 

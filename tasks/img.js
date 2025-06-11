@@ -1,7 +1,7 @@
 const changed = require('gulp-changed');
 const gulp = require('gulp');
 const imagemin = require('gulp-imagemin');
-const touch = require('../../../lib/touch');
+const touch = require('../lib/touch');
 
 module.exports = function (paths) {
 
@@ -14,7 +14,7 @@ module.exports = function (paths) {
 			encoding: false,
 		})
 			.pipe(changed(paths.dist))
-			.pipe(imagemin(require('../../../defaults/imagemin'), {verbose: false}))
+			.pipe(imagemin(require('../defaults/imagemin'), {verbose: false}))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
 			;

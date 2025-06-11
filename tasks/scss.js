@@ -1,18 +1,18 @@
 const gulp = require('gulp');
 const changed = require('gulp-changed');
 const postcss = require('gulp-postcss');
-const renameScssToCss = require('../../../lib/scss-to-css');
+const renameScssToCss = require('../lib/scss-to-css');
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
-const touch = require('../../../lib/touch');
+const touch = require('../lib/touch');
 
 module.exports = function (paths, cachebust) {
 	function main(done) {
 
 		const plugins = [
-			require('postcss-pxtorem')(require('../../../defaults/pxtorem')),
+			require('postcss-pxtorem')(require('../defaults/pxtorem')),
 			require('postcss-preset-env'),
-			require('../../../postcss/font-fallback')({
+			require('../postcss/font-fallback')({
 				'droid': ['Georgia', 'Times New Roman', 'Noto Serif'],
 				'bitter': 'serif',
 			}, path => /main\.css$/.test(path)),
@@ -21,7 +21,7 @@ module.exports = function (paths, cachebust) {
 		if (process.env.NODE_ENV === 'production') {
 			// noinspection JSCheckFunctionSignatures
 			plugins.push(...[
-				require('../../../postcss/cachebust')(cachebust),
+				require('../postcss/cachebust')(cachebust),
 				require('cssnano'),
 			]);
 		}
@@ -29,20 +29,20 @@ module.exports = function (paths, cachebust) {
 		return gulp.src([`${paths.src}/scss/**/*.scss`, '!**/_*.scss'], {base: paths.src})
 			.pipe(changed(paths.dist))
 			.pipe(sourcemaps.init())
-			.pipe(require('../../../transforms/sass-dart')())
-			.pipe(postcss(require('../../../lib/transform-config')(plugins, renameScssToCss)))
+			.pipe(require('../transforms/sass-dart')())
+			.pipe(postcss(require('../lib/transform-config')(plugins, renameScssToCss)))
 			.on('error', done)
 			.pipe(rename(renameScssToCss))
-			.pipe(require('../../../transforms/css-font-metadata')({
+			.pipe(require('../transforms/css-font-metadata')({
 				output: `../var/fonts.json`,
 				filter: file => file.basename === 'main.css'
 			}))
-			.pipe(require('../../../transforms/css-split-print-screen')(file => file.basename === 'main.css'))
-			.pipe(require('../../../transforms/css-split-fonts')({
+			.pipe(require('../transforms/css-split-print-screen')(file => file.basename === 'main.css'))
+			.pipe(require('../transforms/css-split-fonts')({
 				remove: false,
 				filter: file => file.basename === 'main.css'
 			}))
-			.pipe(require('../../../transforms/css-split-mobile-desktop')({
+			.pipe(require('../transforms/css-split-mobile-desktop')({
 				// Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
 				breakpoint: 26,
 				filter: file => file.basename === 'main.css',

@@ -1,6 +1,6 @@
 const gulp = require('gulp');
 const changed = require('gulp-changed');
-const touch = require('../../../lib/touch');
+const touch = require('../lib/touch');
 
 module.exports = (paths) => {
 

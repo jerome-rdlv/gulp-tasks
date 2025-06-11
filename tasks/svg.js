@@ -1,28 +1,28 @@
 const changed = require('gulp-changed');
-const clearSvgParams = require('../../../transforms/clear-svg-params');
-const dom = require('../../../transforms/dom');
+const clearSvgParams = require('../transforms/clear-svg-params');
+const dom = require('../transforms/dom');
 const fs = require('fs');
 const gulp = require('gulp');
 const rename = require('gulp-rename');
-const svgToScss = require('../../../transforms/svg-to-scss');
-const touch = require('../../../lib/touch');
+const svgToScss = require('../transforms/svg-to-scss');
+const touch = require('../lib/touch');
 
 module.exports = function (paths, cachebust) {
 
 	const globs = [`${paths.src}/svg/**/*.svg`];
 
 	const plugins = [
-		require('../../../dom/svgo-disabled'),
+		require('../dom/svgo-disabled'),
 	];
 
 	if (process.env.NODE_ENV === 'production') {
-		plugins.push(require('../../../dom/cachebust')(cachebust, {
+		plugins.push(require('../dom/cachebust')(cachebust, {
 			'image[href]': 'href',
 			'img[src]': 'src',
 		}));
 	}
 
-	const svgo = () => require('../../../transforms/svgo')(require('../../../lib/svgo-config')(require('../../../defaults/svgo')));
+	const svgo = () => require('../transforms/svgo')(require('../lib/svgo-config')(require('../defaults/svgo')));
 
 	const main = function () {
 		return gulp.src(globs, {base: paths.src})
@@ -33,7 +33,7 @@ module.exports = function (paths, cachebust) {
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
 			// svg availability for inclusion as inline symbol in html
-			.pipe(dom({plugins: [require('../../../dom/svg-to-symbol')]}))
+			.pipe(dom({plugins: [require('../dom/svg-to-symbol')]}))
 			.pipe(rename(path => path.extname = '.symbol.svg'))
 			.pipe(gulp.dest(paths.dist))
 			;

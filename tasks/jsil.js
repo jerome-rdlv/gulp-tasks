@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const eslint = require('gulp-eslint-new');
 const gulpif = require('gulp-if');
 const terser = require('gulp-terser');
-const touch = require('../../../lib/touch');
+const touch = require('../lib/touch');
 
 module.exports = (paths) => {
 

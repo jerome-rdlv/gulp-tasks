@@ -1,4 +1,4 @@
-const extract = require('../../../transforms/critical-extract');
+const extract = require('../transforms/critical-extract');
 const gulp = require('gulp');
 
 module.exports = function (paths) {
@@ -11,7 +11,7 @@ module.exports = function (paths) {
 				'wordpress.css': 'https://rue-de-la-vieille.fr/developpeur-wordpress/',
 				'symfony.css': 'https://rue-de-la-vieille.fr/developpeur-symfony/',
 			},
-			require('../../../defaults/critical')
+			require('../defaults/critical')
 		).pipe(gulp.dest(`${paths.dist}/css/critical`));
 	}
 

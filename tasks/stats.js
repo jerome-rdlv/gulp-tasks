@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const touch = require('../../../lib/touch');
+const touch = require('../lib/touch');
 const through = require('through2');
 const Vinyl = require('vinyl');
 

@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const inline = require('../../../transforms/critical-inline');
+const inline = require('../transforms/critical-inline');
 
 module.exports = function (paths) {
 	function main() {
@@ -7,7 +7,7 @@ module.exports = function (paths) {
 			`${paths.dist}/**/*.html`,
 			`!${paths.dist}/report.html`,
 		])
-			.pipe(inline(require('../../../defaults/critical')))
+			.pipe(inline(require('../defaults/critical')))
 			.pipe(gulp.dest(paths.dist))
 			;
 	}
