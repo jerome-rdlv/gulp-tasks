@@ -55,6 +55,9 @@ module.exports = function (paths, cachebust, fonts) {
 	function watch() {
 		return gulp.watch([
 			`${paths.src}/scss/**/*.scss`,
+			`${paths.src}/../blocks/**/*.scss`,
+			`${paths.src}/../class/Block/_blocks.scss`,
+			`${paths.src}/../class/Block/**/*.scss`,
 			`${paths.var}/_svg.scss`,
 		], main);
 	}
