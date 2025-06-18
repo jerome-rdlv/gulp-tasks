@@ -5,12 +5,8 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const touch = require('../lib/touch');
 
-module.exports = function (paths) {
+module.exports = function (paths, globs) {
 
-	const globs = [
-		`${paths.src}/js/main.js`,
-		`${paths.src}/js/inline/*.js`,
-	];
 	const production = process.env.NODE_ENV === 'production';
 
 	function main(done, watch) {
