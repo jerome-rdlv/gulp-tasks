@@ -47,7 +47,7 @@ module.exports = function (paths, globs) {
 								},
 							},
 							{
-								test: /\.(txt|glsl|svg)$/i, use: 'raw-loader',
+								test: /\.(txt|glsl|svg|css)$/i, use: 'raw-loader',
 							},
 						],
 					},
