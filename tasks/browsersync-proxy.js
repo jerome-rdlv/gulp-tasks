@@ -1,7 +1,7 @@
 const browsersync = require('browser-sync');
 const cachebustRewrite = require('../lib/cachebust-rewrite');
 
-module.exports = function (paths, target, host) {
+module.exports = function (paths, target, host, files) {
 	const main = function () {
 		return new Promise(function (resolve) {
 			// noinspection JSUnusedGlobalSymbols
@@ -15,7 +15,10 @@ module.exports = function (paths, target, host) {
 						},
 					]
 				},
-				files: [`${paths.dist}/**/*.{js,css,woff2}`],
+				files: files || [
+					`${paths.dist}/**/*.{js,woff2}`,
+					`${paths.dist}/css/{main,main.desktop,main.mobile}.css`,
+				],
 				ghostMode: false,
 				open: false,
 				ui: false,
