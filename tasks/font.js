@@ -4,9 +4,11 @@ const changed = require('gulp-changed');
 const fontsubset = require('../transforms/font-subset');
 const touch = require('../lib/touch');
 
-module.exports = (paths) => {
+module.exports = (paths, stats) => {
 
 	const globs = `${paths.src}/font/*.{woff,woff2}`;
+
+	stats = stats || `${paths.var}/stats.json`;
 
 	function main() {
 
@@ -20,7 +22,7 @@ module.exports = (paths) => {
 			.pipe(gulpif(!prod, changed(paths.dist)))
 			.pipe(gulpif(prod, fontsubset(file => {
 				try {
-					const text = require(`${paths.var}/stats.json`).text;
+					const text = require(stats).text;
 					return text[file.stem] || text.all;
 				} catch (e) {
 					return '';
