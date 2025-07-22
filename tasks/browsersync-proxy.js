@@ -17,7 +17,7 @@ module.exports = function (paths, target, host, files) {
 				},
 				files: files || [
 					`${paths.dist}/**/*.{js,woff2}`,
-					`${paths.dist}/css/{main,main.desktop,main.mobile}.css`,
+					`${paths.dist}/css/{main,main.desktop,main.mobile,main.print}.css`,
 				],
 				ghostMode: false,
 				open: false,
