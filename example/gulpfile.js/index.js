@@ -18,12 +18,11 @@ const paths = {
 };
 
 const cachebust = ((cachebustUrl, getFileSignature) => {
-	return (url, path) => cachebustUrl.add(url, getFileSignature(path));
+	return (url, path) => cachebustUrl.add(url, getFileSignature(path.replace(paths.src, paths.dist)));
 })(
 	require('../../lib/cachebust-url')(),
 	require('../../lib/get-file-signature')()
 );
-
 
 const browsersync = require('../../tasks/browsersync-serve')(paths, argv['host']);
 const clean = require('../../tasks/clean')(paths);

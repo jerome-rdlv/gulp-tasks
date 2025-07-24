@@ -26,11 +26,12 @@ module.exports = function (cachebust) {
 						return;
 					}
 					const src = path.resolve(`${path.dirname(result.opts.to)}/${url}`);
-					if (!fs.existsSync(src)) {
-						decl.warn(result, `${url} does not exists in destination`);
+					try {
+						node.nodes[0].value = cachebust(url, src);
+					} catch (e) {
+						decl.warn(result, e.toString());
 						return;
 					}
-					node.nodes[0].value = cachebust(url, src);
 				});
 				decl.value = valueParser.stringify(parsed);
 			});
