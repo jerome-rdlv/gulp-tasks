@@ -30,7 +30,7 @@ module.exports = function (paths, cachebust, fonts) {
 			.on('error', done)
 			.pipe(rename(renameScssToCss))
 			.pipe(require('../transforms/css-font-metadata')({
-				output: `../var/fonts.json`,
+				output: `fonts.json`,
 				filter: file => file.basename === 'main.css'
 			}))
 			.pipe(require('../transforms/css-split-print-screen')(file => file.basename === 'main.css'))

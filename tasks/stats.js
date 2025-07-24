@@ -86,7 +86,7 @@ module.exports = function (paths) {
 		return gulp.src(globs)
 			.pipe(generateTable('stats.json', 'script,noscript', (() => {
 				try {
-					return require('../../var/fonts.json');
+					return require(`${paths.dist}/fonts.json`);
 				} catch {
 					return [];
 				}
