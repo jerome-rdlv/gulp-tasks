@@ -95,7 +95,7 @@ module.exports = (fallbacks = {}, filter = null) => {
 			return;
 		}
 
-		const font = getFont(rule, path.dirname(result.opts.from) + '/');
+		const font = getFont(rule, path.dirname(result.opts.to) + '/');
 		if (!font) {
 			// no font found
 			return;

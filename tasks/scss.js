@@ -26,7 +26,7 @@ module.exports = function (paths, cachebust, fonts) {
 		return gulp.src([`${paths.src}/scss/**/*.scss`, '!**/_*.scss'], {base: paths.src})
 			.pipe(sourcemaps.init())
 			.pipe(require('../transforms/sass-dart')())
-			.pipe(postcss(require('../lib/transform-config')(plugins, renameScssToCss)))
+			.pipe(postcss(require('../lib/transform-config')(plugins, paths, renameScssToCss)))
 			.on('error', done)
 			.pipe(rename(renameScssToCss))
 			.pipe(require('../transforms/css-font-metadata')({
