@@ -9,7 +9,7 @@ module.exports = function (opts) {
 	}).join(' ');
 
 	return require('gulp-exec')(
-		file => `/usr/bin/sass --embed-source-map --embed-sources ${args} "${file.path}"`,
+		file => `sass --embed-source-map --embed-sources ${args} "${file.path}"`,
 		{
 			continueOnError: false,
 			pipeStdout: true,
