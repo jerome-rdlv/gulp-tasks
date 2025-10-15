@@ -5,6 +5,7 @@ const renameScssToCss = require('../lib/scss-to-css');
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
 const touch = require('../lib/touch');
+const exec = require('gulp-exec');
 
 module.exports = function (paths, cachebust, fonts) {
 	function main(done) {
@@ -26,6 +27,7 @@ module.exports = function (paths, cachebust, fonts) {
 		return gulp.src([`${paths.src}/scss/**/*.scss`, '!**/_*.scss'], {base: paths.src})
 			.pipe(sourcemaps.init())
 			.pipe(require('../transforms/sass-dart')())
+			.pipe(exec.reporter({err: true, strerr: true, stdout: false}))
 			.pipe(postcss(require('../lib/transform-config')(plugins, paths, renameScssToCss)))
 			.on('error', done)
 			.pipe(rename(renameScssToCss))

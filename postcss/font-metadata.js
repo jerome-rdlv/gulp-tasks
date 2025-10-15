@@ -1,3 +1,4 @@
+const path = require('path');
 const valueParser = require('postcss-value-parser');
 const {isEqual} = require('lodash');
 
@@ -39,7 +40,7 @@ module.exports = function (aliases) {
 		postcssPlugin: 'font-metadata',
 		data: metadata,
 		AtRule: {
-			'font-face': rule => {
+			'font-face': (rule, {result}) => {
 				const font = {family: null, opts: {}, src: null, flags: {}};
 				rule.walkComments(comment => {
 					try {
@@ -63,11 +64,10 @@ module.exports = function (aliases) {
 							if (src.type !== 'function' || src.value !== 'url') {
 								return;
 							}
-							font.src = src.nodes[0].value;
+							font.src = path.resolve(`${path.dirname(result.opts.from)}/${src.nodes[0].value}`);
 							let key = font.src.split('/');
 							font.key = key[key.length - 1].split('.')[0];
 							return;
-
 					}
 				});
 				if (!font.src) {

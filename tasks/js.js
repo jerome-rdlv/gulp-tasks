@@ -1,26 +1,38 @@
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const gulp = require('gulp');
 const named = require('vinyl-named');
-const webpack = require('webpack-stream');
-const ESLintPlugin = require('eslint-webpack-plugin');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const path = require('path');
 const touch = require('../lib/touch');
+const webpack = require('webpack-stream');
 
 module.exports = function (paths, globs) {
 
 	const production = process.env.NODE_ENV === 'production';
 
+	const entry = globs.reduce((carry, item) => {
+		const entry = (typeof item === 'object') ? item : {import: item};
+		if (!/^(\/|.\/)/.test(entry.import)) {
+			// add explicit relative path
+			entry.import = `./${entry.import}`;
+		}
+		const name = entry.import.replace(`${paths.src}/js/`, '').replace(/.js$/, '');
+		carry[name] = entry;
+		return carry;
+	}, {});
+
 	function main(done, watch) {
-		return gulp.src(globs, {
+		return gulp.src(Object.values(entry).map(entry => entry.import), {
 			base: paths.src,
 			sourcemaps: true,
 		})
-			.pipe(named(function (file) {
-				// chunk name
-				return file.relative.substring(0, file.relative.length - file.extname.length);
-			}))
 			.pipe(webpack({
 				watch: !!watch,
 				config: {
+					entry: entry,
+					output: {
+						filename: 'js/[name].js',
+					},
 					target: 'web',
 					module: {
 						rules: [
@@ -54,11 +66,8 @@ module.exports = function (paths, globs) {
 					watchOptions: {
 						ignored: '/node_modules/',
 					},
-					devtool: production ? false : 'eval',
+					devtool: production ? 'source-map' : 'eval-cheap-module-source-map',
 					mode: production ? 'production' : 'development',
-					output: {
-						filename: '[name].js'
-					},
 					plugins: [
 						new ESLintPlugin({
 							configType: 'flat',
