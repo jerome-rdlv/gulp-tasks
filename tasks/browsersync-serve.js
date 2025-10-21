@@ -20,7 +20,7 @@ module.exports = function (paths, host = null) {
 				middleware: [
 					cachebustRewrite,
 					(req, res, next) => {
-						res.setHeader('X-BrowserSync-Proxy', 'gulp-tasks');
+						res.setHeader('X-BrowserSync-Proxy', host);
 						return next();
 					}
 				],
