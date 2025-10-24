@@ -4,10 +4,13 @@ const fontsubset = require('../transforms/font-subset');
 const gulp = require('gulp');
 const touch = require('../lib/touch');
 
-module.exports = (paths, subset = exports.SUBSET) => {
-
-	const globs = `${paths.src}/font/*.{ttf,woff,woff2}`;
-
+module.exports = function (
+	{
+		paths,
+		globs = `${paths.src}/font/*.{ttf,woff,woff2}`,
+		subset = exports.SUBSET
+	}
+) {
 	function main() {
 
 		return gulp.src(globs, {

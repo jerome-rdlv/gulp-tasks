@@ -1,3 +1,4 @@
+const fs = require('node:fs/promises');
 const path = require('path');
 const postcss = require('postcss');
 const through = require('through2');
@@ -14,7 +15,10 @@ module.exports = function ({output, aliases = {}, filter}) {
 		}
 
 		postcss([fontMetadata])
-			.process(file.contents, {from: file.relative})
+			.process(file.contents, {
+				from: file.path,
+				to: file.path,
+			})
 			.then(() => complete(null, file))
 	}
 
@@ -25,17 +29,16 @@ module.exports = function ({output, aliases = {}, filter}) {
 			// make paths relative to output file
 			data.forEach(item => {
 				item.fonts.forEach(font => {
-					// works only when output is inside dist dir hierarchy
-					font.src = path.relative(path.dirname(output), font.src);
+					font.src = path.relative(
+						path.resolve(path.dirname(output)),
+						path.resolve(font.src)
+					);
 				});
 			});
 
-			const file = new Vinyl({
-				path: output,
-				contents: Buffer.from(JSON.stringify(data, null, '\t'), 'utf8')
-			});
-			this.push(file);
-			complete();
+			fs.writeFile(output, Buffer.from(JSON.stringify(data, null, '\t'), 'utf8'))
+				.then(complete);
+		
 		} catch (error) {
 			complete(error);
 		}

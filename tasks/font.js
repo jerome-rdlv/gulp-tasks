@@ -3,17 +3,23 @@ const fontconvert = require('../transforms/font-convert');
 const fontsubset = require('../transforms/font-subset');
 const gulp = require('gulp');
 const touch = require('../lib/touch');
+const fs = require('node:fs/promises');
+const hasChangedFactory = require('../lib/has-changed-factory');
 
-module.exports = (paths, stats) => {
+module.exports = function (
+	{
+		paths,
+		globs = `${paths.src}/font/*.{woff,woff2}`,
+		statsDataFile = `${paths.var}/stats.json`,
+	}
+) {
 
-	const globs = `${paths.src}/font/*.{woff,woff2}`;
-
-	stats = stats || `${paths.var}/stats.json`;
+	const includes = [statsDataFile].filter(v => !!v);
 
 	function getsubset(file) {
 		try {
-			const text = require(stats).text;
-			return text[file.stem] || text.all;
+			const stats = require(statsDataFile);
+			return stats.text[stats.table[file.stem] || file.stem] || stats.text.all;
 		} catch (e) {
 			return '';
 		}
@@ -29,7 +35,10 @@ module.exports = (paths, stats) => {
 			encoding: false,
 			removeBOM: false,
 		})
-			.pipe(changed(paths.dist, {extension: '.woff2'}))
+			.pipe(changed(paths.dist, {
+				extension: '.woff2',
+				hasChanged: hasChangedFactory(includes)
+			}))
 			.pipe(fontconvert())
 			.pipe(fontsubset(getsubset))
 			.pipe(touch())

@@ -1,20 +1,15 @@
 const gulp = require('gulp');
 
-module.exports = function (paths) {
+module.exports = function (paths, globs = [`${paths.var}/*`, `${paths.dist}/*`]) {
+
 	function main() {
 		console.log(process.cwd(), paths.dist);
 		return gulp
-			.src(
-				[
-					`${paths.var}/*`,
-					`${paths.dist}/*`,
-				],
-				{
-					allowEmpty: true,
-					dot: true,
-					read: false
-				}
-			)
+			.src(globs, {
+				allowEmpty: true,
+				dot: true,
+				read: false
+			})
 			.pipe(require('gulp-sort')())
 			.pipe(require('gulp-clean')());
 	}

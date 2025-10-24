@@ -1,66 +1,77 @@
 const gulp = require('gulp');
-const changed = require('gulp-changed');
-const postcss = require('gulp-postcss');
-const renameScssToCss = require('../lib/scss-to-css');
+const postcss = require('gulp-tasks/lib/stream-postcss');
+const renameScssToCss = require('gulp-tasks/lib/scss-to-css');
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
-const touch = require('../lib/touch');
+const touch = require('gulp-tasks/lib/touch');
 const exec = require('gulp-exec');
 
-module.exports = function (paths, cachebust, fonts) {
+module.exports = function (
+	{
+		paths,
+		globs = [
+			`${paths.src}/scss/**/*.scss`,
+		],
+		watched = [
+			`${paths.src}/../class/Block/**/*.scss`,
+			`${paths.var}/_svg.scss`,
+		],
+		cachebust,
+		fontsDataFile,
+		fonts,
+		aliases = {},
+		filter = file => file.basename === 'main.css',
+		plugins = [
+			require('postcss-pxtorem')(require('gulp-tasks/defaults/pxtorem')),
+			require('postcss-preset-env'),
+			require('gulp-tasks/postcss/font-fallback')(fonts),
+		],
+		production_plugins = [
+			require('gulp-tasks/postcss/cachebust')(cachebust),
+			require('cssnano'),
+		],
+		postprod = function (workflow) {
+			return workflow
+				.pipe(require('gulp-tasks/transforms/css-font-metadata')({output: fontsDataFile, filter, aliases}))
+				.pipe(require('gulp-tasks/transforms/css-split-fonts')({filter}))
+				.pipe(require('gulp-tasks/transforms/css-split-print-screen')({filter}))
+				.pipe(require('gulp-tasks/transforms/css-split-mobile-desktop')({filter}));
+		}
+	}
+) {
+
+	watched = [...globs, ...watched];
+	globs.push('!**/_*.scss');
+
+	if (process.env.NODE_ENV === 'production') {
+		// noinspection JSCheckFunctionSignatures
+		plugins.push(...production_plugins);
+	}
+
 	function main(done) {
 
-		const plugins = [
-			require('postcss-pxtorem')(require('../defaults/pxtorem')),
-			require('postcss-preset-env'),
-			require('../postcss/font-fallback')(fonts, path => /main\.css$/.test(path)),
-		];
+		let workflow = gulp.src(globs, {base: paths.src, sourcemaps: true})
+			.pipe(require('gulp-tasks/transforms/sass-dart')())
+			.pipe(exec.reporter({err: true, strerr: true, stdout: false}))
+			.pipe(rename(renameScssToCss))
+			.pipe(postcss(plugins))
+			.on('error', done);
 
-		if (process.env.NODE_ENV === 'production') {
-			// noinspection JSCheckFunctionSignatures
-			plugins.push(...[
-				require('../postcss/cachebust')(cachebust),
-				require('cssnano'),
-			]);
+		if (typeof postprod === 'function') {
+			workflow = postprod.call(null, workflow);
 		}
 
-		return gulp.src([`${paths.src}/scss/**/*.scss`, '!**/_*.scss'], {base: paths.src})
-			.pipe(sourcemaps.init())
-			.pipe(require('../transforms/sass-dart')())
-			.pipe(exec.reporter({err: true, strerr: true, stdout: false}))
-			.pipe(postcss(require('../lib/transform-config')(plugins, paths, renameScssToCss)))
-			.on('error', done)
-			.pipe(rename(renameScssToCss))
-			.pipe(require('../transforms/css-font-metadata')({
-				output: `fonts.json`,
-				filter: file => file.basename === 'main.css'
-			}))
-			.pipe(require('../transforms/css-split-print-screen')(file => file.basename === 'main.css'))
-			.pipe(require('../transforms/css-split-fonts')({
-				remove: false,
-				filter: file => file.basename === 'main.css'
-			}))
-			.pipe(require('../transforms/css-split-mobile-desktop')({
-				// Lighthouse Moto G Power test device screen is 412px wide (26em × 16px)
-				breakpoint: 26,
-				filter: file => file.basename === 'main.css',
-			}))
-			.pipe(sourcemaps.write('.'))
+		workflow = workflow
 			.pipe(touch())
-			.pipe(gulp.dest(paths.dist))
-			;
+			.pipe(gulp.dest(paths.dist, {sourcemaps: '.'}));
+
+		return workflow;
 	}
 
 	main.displayName = 'scss';
 
 	function watch() {
-		return gulp.watch([
-			`${paths.src}/scss/**/*.scss`,
-			`${paths.src}/../blocks/**/*.scss`,
-			`${paths.src}/../class/Block/_blocks.scss`,
-			`${paths.src}/../class/Block/**/*.scss`,
-			`${paths.var}/_svg.scss`,
-		], main);
+		return gulp.watch(watched, main);
 	}
 
 	watch.displayName = 'scss:watch';

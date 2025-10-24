@@ -7,9 +7,7 @@ const rename = require('gulp-rename');
 const svgToScss = require('../transforms/svg-to-scss');
 const touch = require('../lib/touch');
 
-module.exports = function (paths, cachebust) {
-
-	const globs = [`${paths.src}/svg/**/*.svg`];
+module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg`]) {
 
 	const plugins = [
 		require('../dom/svgo-disabled'),

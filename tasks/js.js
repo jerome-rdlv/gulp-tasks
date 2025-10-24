@@ -6,32 +6,36 @@ const path = require('path');
 const touch = require('../lib/touch');
 const webpack = require('webpack-stream');
 
-module.exports = function (paths, globs) {
+module.exports = function (
+	{
+		paths,
+		globs = [...globSync(`${paths.src}/js/**/*.js`)],
+		reportFile = paths.var + '/report.html'
+	}
+) {
 
 	const production = process.env.NODE_ENV === 'production';
+	const absSrc = `${path.resolve(paths.src)}/`;
 
 	const entry = globs.reduce((carry, item) => {
 		const entry = (typeof item === 'object') ? item : {import: item};
 		if (!/^(\/|.\/)/.test(entry.import)) {
-			// add explicit relative path
-			entry.import = `./${entry.import}`;
+			// make absolute
+			entry.import = path.resolve(entry.import);
 		}
-		const name = entry.import.replace(`${paths.src}/js/`, '').replace(/.js$/, '');
+		const name = entry.import.replace(absSrc, '');
 		carry[name] = entry;
 		return carry;
 	}, {});
 
 	function main(done, watch) {
-		return gulp.src(Object.values(entry).map(entry => entry.import), {
-			base: paths.src,
-			sourcemaps: true,
-		})
+		return gulp.src(Object.values(entry).map(entry => entry.import), {sourcemaps: true})
 			.pipe(webpack({
 				watch: !!watch,
 				config: {
 					entry: entry,
 					output: {
-						filename: 'js/[name].js',
+						filename: '[name]',
 					},
 					target: 'web',
 					module: {
@@ -74,7 +78,7 @@ module.exports = function (paths, globs) {
 						}),
 						new BundleAnalyzerPlugin({
 							analyzerMode: 'static',
-							reportFilename: paths.dist + '/report.html',
+							reportFilename: reportFile,
 							openAnalyzer: false,
 						})
 					],

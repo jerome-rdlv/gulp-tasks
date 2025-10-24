@@ -64,7 +64,7 @@ module.exports = function (aliases) {
 							if (src.type !== 'function' || src.value !== 'url') {
 								return;
 							}
-							font.src = path.resolve(`${path.dirname(result.opts.from)}/${src.nodes[0].value}`);
+							font.src = path.normalize(`${path.dirname(result.opts.to)}/${src.nodes[0].value}`);
 							let key = font.src.split('/');
 							font.key = key[key.length - 1].split('.')[0];
 							return;

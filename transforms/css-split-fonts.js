@@ -2,7 +2,7 @@ const csssubset = require('../lib/css-subset');
 const Stream = require('stream');
 const {extract, drop} = require('../postcss/fonts-subset');
 
-module.exports = function ({remove, filter}) {
+module.exports = function ({filter, remove = false}) {
 	var stream = new Stream.Transform({objectMode: true});
 	stream._transform = function (file, encoding, complete) {
 		if (!file || file.isNull()) {

@@ -3,9 +3,7 @@ const gulp = require('gulp');
 const imagemin = require('gulp-imagemin');
 const touch = require('../lib/touch');
 
-module.exports = function (paths) {
-
-	const globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`;
+module.exports = function (paths, globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`) {
 
 	const main = function () {
 

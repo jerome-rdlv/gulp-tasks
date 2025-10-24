@@ -25,7 +25,8 @@ module.exports = function (cachebust) {
 					if (/^data:/.test(url)) {
 						return;
 					}
-					const src = path.resolve(`${path.dirname(result.opts.to)}/${url}`);
+					const base = path.dirname(result.opts.to);
+					const src = path.resolve(`${base}/${url.replace(/#.*$/, '')}`);
 					try {
 						node.nodes[0].value = cachebust(url, src);
 					} catch (e) {

@@ -1,7 +1,6 @@
+const fs = require('node:fs/promises');
 const gulp = require('gulp');
-const touch = require('../lib/touch');
 const through = require('through2');
-const Vinyl = require('vinyl');
 
 function getText(nodes, properties) {
 	const text = Array.prototype.map.call(nodes, node => node.textContent).join('');
@@ -39,7 +38,7 @@ function generateTable(output, exclude, fonts) {
 
 		// count chars for specific selectors
 		fonts.forEach(({family, selectors, fonts}) => {
-			selectors.forEach(([selector, properties]) => {
+			selectors && selectors.forEach(([selector, properties]) => {
 				// noinspection JSCheckFunctionSignatures
 				text[family] = (text[family] || '') + getText(dom.window.document.querySelectorAll(selector), properties);
 			});
@@ -58,16 +57,14 @@ function generateTable(output, exclude, fonts) {
 			Object.keys(text).forEach(key => {
 				text[key] = Array.from(new Set(text[key])).sort((a, b) => a.codePointAt(0) - b.codePointAt(0)).join('');
 			});
-			this.push(new Vinyl({
-				path: output,
-				contents: Buffer.from(JSON.stringify({
-					table: table,
-					text: text,
+			fs.writeFile(output, Buffer.from(JSON.stringify({
+					table,
+					text,
 					classes: Array.from(classes),
 					ids: Array.from(ids),
-				}, null, '\t'), 'utf8')
-			}));
-			complete();
+				}, null, '\t')
+			))
+				.then(complete);
 		} catch (error) {
 			complete(error);
 		}
@@ -76,24 +73,28 @@ function generateTable(output, exclude, fonts) {
 	return through.obj(eachFile, endStream, false);
 }
 
-module.exports = function (paths) {
+module.exports = function (
+	{
+		paths,
+		fontsDataFile,
+		statsDataFile,
+		globs = `${paths.src}/*.html`,
+		exclude = 'script,noscript',
+	}
+) {
 
-	const globs = `${paths.src}/*.html`;
+	// must be called at last moment because fontsDataFile is written during process
+	function fontsData() {
+		try {
+			return require(fontsDataFile);
+		} catch {
+			console.warn(`Font metadata file not found: ${fontsDataFile}`);
+			return [];
+		}
+	}
 
-	// selectors: require(`${config.dist}/css/fonts.json`),
 	const main = function () {
-
-		return gulp.src(globs)
-			.pipe(generateTable('stats.json', 'script,noscript', (() => {
-				try {
-					return require(`${paths.dist}/fonts.json`);
-				} catch {
-					return [];
-				}
-			})()))
-			.pipe(touch())
-			.pipe(gulp.dest(paths.var))
-			;
+		return gulp.src(globs).pipe(generateTable(statsDataFile, exclude, fontsData()));
 	};
 
 	main.displayName = 'stats';
