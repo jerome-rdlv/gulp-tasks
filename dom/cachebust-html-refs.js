@@ -1,5 +1,6 @@
 const fs = require('fs');
 const through = require('through2');
+const URL = require('../lib/url');
 
 /**
  * @deprecated Replace with dom/cachebust
@@ -37,7 +38,7 @@ exports.get = function (dist, cachebustUrl, getFileSignature) {
 					const url = node.getAttribute(attr);
 					const path = dist + url;
 					// handle http://, https:// and // (agnostic scheme)
-					if (!url.match(/^(https?:)?\/\//) && fs.existsSync(path)) {
+					if (!URL.absolute(url) && fs.existsSync(path)) {
 						node.setAttribute(attr, cachebustUrl(
 							url,
 							getFileSignature(path)
