@@ -5,6 +5,7 @@ const named = require('vinyl-named');
 const path = require('path');
 const touch = require('../lib/touch');
 const webpack = require('webpack-stream');
+const {globSync} = require('glob');
 
 module.exports = function (
 	{
