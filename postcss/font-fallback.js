@@ -88,8 +88,6 @@ function getFont(rule, base) {
 
 module.exports = (fallbacks = {}, filter = null) => {
 
-	const handled = {};
-
 	async function generateFallbacks(rule, {result}) {
 		if (filter && !filter(result.opts.to)) {
 			return;
@@ -100,11 +98,14 @@ module.exports = (fallbacks = {}, filter = null) => {
 			// no font found
 			return;
 		}
-
-		if (font.family in handled) {
+		
+		if (result.handled === undefined) {
+			result.handled = {};
+		}
+		if (font.family in result.handled) {
 			return;
 		}
-		handled[font.family] = true;
+		result.handled[font.family] = true;
 
 		if (!fallbacks[font.family]) {
 			// no fallback registered for this font
