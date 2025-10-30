@@ -10,7 +10,9 @@ module.exports = function (input, output) {
 	}
 
 	const main = function () {
-		return eleventy().then(eleventy => eleventy.write());
+		return eleventy().then(eleventy => eleventy.write()).catch(e => {
+			throw e.name === 'EleventyConfigError' ? e.originalError : e;
+		});
 	}
 
 	const watch = function () {
