@@ -24,7 +24,8 @@ module.exports = function (
 		plugins = [
 			require('postcss-pxtorem')(require('gulp-tasks/defaults/pxtorem')),
 			require('postcss-preset-env'),
-			require('gulp-tasks/postcss/font-fallback')(fonts),
+			require('gulp-tasks/postcss/font-fallback')(fonts, filter),
+			require('gulp-tasks/postcss/ttf-to-woff')(),
 		],
 		production_plugins = [
 			require('gulp-tasks/postcss/cachebust')(cachebust),

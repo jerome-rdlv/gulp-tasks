@@ -61,7 +61,7 @@ async function getMetricsForSrc(sources) {
 	return null;
 }
 
-function getFont(rule, base) {
+function parseFontFace(rule, base) {
 	const font = {};
 	for (const node of rule.nodes) {
 		if (node.type !== 'decl') {
@@ -86,68 +86,65 @@ function getFont(rule, base) {
 	return font;
 }
 
-module.exports = (fallbacks = {}, filter = null) => {
-
-	async function generateFallbacks(rule, {result}) {
-		if (filter && !filter(result.opts.to)) {
-			return;
-		}
-
-		const font = getFont(rule, path.dirname(result.opts.to) + '/');
-		if (!font) {
-			// no font found
-			return;
-		}
-		
-		if (result.handled === undefined) {
-			result.handled = {};
-		}
-		if (font.family in result.handled) {
-			return;
-		}
-		result.handled[font.family] = true;
-
-		if (!fallbacks[font.family]) {
-			// no fallback registered for this font
-			return;
-		}
-
-		const metrics = await getMetricsForSrc(font.src);
-		if (!metrics) {
-			// can not read font metrics, maybe warn
-			return;
-		}
-
-		if (fallbacks[font.family] in generics) {
-			fallbacks[font.family] = generics[fallbacks[font.family]];
-		}
-
-		for (const fallback of fallbacks[font.family].reverse()) {
-			const fallbackMetrics = await getMetrics(fallback.font || fallback);
-			if (!fallbackMetrics) {
-				continue;
-			}
-			let props = {
-				name: `${font.family}-fallback`,
-				font: fallbackMetrics.familyName,
-				metrics: fallbackMetrics,
-			};
-			if (typeof fallback === 'object') {
-				for (const prop of overrides) {
-					if (fallback.hasOwnProperty(prop)) {
-						props[prop] = fallback[prop];
-					}
-				}
-			}
-			const fontFace = generateFontFace(metrics, props);
-			rule.before(fontFace);
-		}
-	}
-
+module.exports = (fallbacks = {}, filter) => {
 	return {
 		postcssPlugin: 'font-fallback',
 		AtRule: {
-			'font-face': generateFallbacks,
+			'font-face': async function (rule, {result}) {
+				if (filter && !filter(result.opts.file)) {
+					return;
+				}
+
+				const font = parseFontFace(rule, path.dirname(result.opts.to) + '/');
+				if (!font) {
+					// no font found
+					return;
+				}
+
+				if (result.handled === undefined) {
+					result.handled = {};
+				}
+				if (font.family in result.handled) {
+					return;
+				}
+				result.handled[font.family] = true;
+
+				if (!fallbacks[font.family]) {
+					// no fallback registered for this font
+					return;
+				}
+
+				const metrics = await getMetricsForSrc(font.src);
+				if (!metrics) {
+					// can not read font metrics, maybe warn
+					return;
+				}
+
+				if (fallbacks[font.family] in generics) {
+					fallbacks[font.family] = generics[fallbacks[font.family]];
+				}
+
+				for (const fallback of fallbacks[font.family].reverse()) {
+					const fallbackMetrics = await getMetrics(fallback.font || fallback);
+					if (!fallbackMetrics) {
+						continue;
+					}
+					let props = {
+						name: `${font.family}-fallback`,
+						font: fallbackMetrics.familyName,
+						metrics: fallbackMetrics,
+					};
+					if (typeof fallback === 'object') {
+						for (const prop of overrides) {
+							if (fallback.hasOwnProperty(prop)) {
+								props[prop] = fallback[prop];
+							}
+						}
+					}
+					const fontFace = generateFontFace(metrics, props);
+					rule.before(fontFace);
+				}
+			},
 		},
 	}
 }
