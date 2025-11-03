@@ -23,7 +23,7 @@ module.exports = function (opts) {
 		const cmd = `sass --embed-source-map --embed-sources ${args} "${file.path}"`;
 		exec(cmd, (err, stdout, stderr) => {
 			if (err) {
-				this.emit('error', new PluginError('sass', err));
+				throw new PluginError('sass', err);
 			}
 
 			if (file.sourceMap) {
