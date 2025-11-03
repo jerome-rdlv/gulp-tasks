@@ -17,6 +17,7 @@ const withoutQuotes = (str) => str.trim().replace(QUOTES_RE, "");
 const generics = {
 	'serif': ['Times New Roman', 'Noto Serif'],
 	'sans-serif': ['Arial', 'Roboto'],
+	'monospace': ['Courier New'],
 };
 
 const overrides = ['font-stretch', 'font-weight', 'size-adjust', 'ascent-override', 'descent-override', 'line-gap-override'];
