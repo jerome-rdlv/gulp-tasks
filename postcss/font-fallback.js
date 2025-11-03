@@ -127,6 +127,7 @@ module.exports = (fallbacks = {}, filter) => {
 				for (const fallback of fallbacks[font.family].reverse()) {
 					const fallbackMetrics = await getMetrics(fallback.font || fallback);
 					if (!fallbackMetrics) {
+						console.warn(`No metrics found for fallback font: ${fallback.font || fallback}`);
 						continue;
 					}
 					let props = {
