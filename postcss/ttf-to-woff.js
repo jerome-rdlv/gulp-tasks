@@ -77,7 +77,7 @@ module.exports = () => {
 
 				const src = sources.map(source => {
 					return Object.entries(source)
-						.filter(([key]) => key !== 'm')
+						.filter(([key, value]) => key !== 'm' && value)
 						.map(([key, value]) => {
 							return `${key}("${value}")`;
 						})
