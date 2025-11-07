@@ -1,5 +1,4 @@
-const fs = require('fs');
-const path = require('path');
+const asset = require('../lib/asset');
 const valueParser = require('postcss-value-parser');
 
 module.exports = function (cachebust) {
@@ -25,8 +24,7 @@ module.exports = function (cachebust) {
 					if (/^data:/.test(url)) {
 						return;
 					}
-					const base = path.dirname(result.opts.to);
-					const src = path.resolve(`${base}/${url.replace(/#.*$/, '')}`);
+					const src = asset.resolve(url, result.opts.to).replace(/#.*$/, '');
 					try {
 						node.nodes[0].value = cachebust(url, src);
 					} catch (e) {

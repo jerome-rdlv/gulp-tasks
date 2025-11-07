@@ -20,7 +20,7 @@ module.exports = function (opts) {
 	}).join(' ');
 
 	return through.obj(function (file, enc, cb) {
-		const cmd = `sass --embed-source-map --embed-sources ${args} "${file.path}"`;
+		const cmd = `sass --embed-source-map --embed-sources ${args} "${file.base}/${file.relative}"`;
 		exec(cmd, (err, stdout, stderr) => {
 			if (err) {
 				throw new PluginError('sass', err);
@@ -37,7 +37,7 @@ module.exports = function (opts) {
 				map.file = file.relative;
 				map.sources = [].map.call(map.sources, function (source) {
 					// make source relative to file and fix path prefix
-					source = path.relative(path.dirname(file.path), source.replace(/^file:\/\//, ''));
+					source = path.relative(path.dirname(file.path), decodeURI(source.replace(/^file:\/\//, '')));
 					return source;
 				});
 				applySourceMap(file, map);

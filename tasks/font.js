@@ -16,7 +16,7 @@ module.exports = function (
 
 	const includes = [statsDataFile].filter(v => !!v);
 
-	function getsubset(file) {
+	function getsubsets(file) {
 		try {
 			const stats = require(statsDataFile);
 			return stats.text[stats.table[file.stem] || file.stem] || stats.text.all;
@@ -26,8 +26,6 @@ module.exports = function (
 	}
 
 	function main() {
-
-		const prod = process.env.NODE_ENV === 'production';
 
 		return gulp.src(globs, {
 			allowEmpty: true,
@@ -40,7 +38,7 @@ module.exports = function (
 				hasChanged: hasChangedFactory(includes)
 			}))
 			.pipe(fontconvert())
-			.pipe(fontsubset(getsubset))
+			.pipe(fontsubset.transform(getsubsets))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
 			;

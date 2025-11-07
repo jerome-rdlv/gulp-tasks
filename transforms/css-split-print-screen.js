@@ -1,6 +1,6 @@
 const Stream = require('stream');
 const csssubset = require('../lib/css-subset');
-const {extract, drop} = require('../postcss/print-subset');
+const {extract, drop} = require('../postcss/extract-print');
 
 module.exports = function ({filter}) {
 	var stream = new Stream.Transform({objectMode: true});
@@ -13,7 +13,7 @@ module.exports = function ({filter}) {
 			return complete('Streams are not supported!', file);
 		}
 
-		if (filter && !filter(file)) {
+		if (filter && !filter(file.relative)) {
 			return complete(null, file);
 		}
 

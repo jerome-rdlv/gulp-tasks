@@ -5,8 +5,8 @@ module.exports = function (cachebust, selectors) {
 		Object.entries(selectors).forEach(([selector, attribute]) => {
 			document.querySelectorAll(selector).forEach(node => {
 				const url = node.getAttribute(attribute);
-				const path = asset.resolve(url, to);
-				node.setAttribute(attribute, cachebust(url, path));
+				const src = asset.resolve(url, to).replace(/#.*$/, '');
+				node.setAttribute(attribute, cachebust(url, src));
 			});
 		});
 	};

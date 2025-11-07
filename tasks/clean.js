@@ -3,7 +3,6 @@ const gulp = require('gulp');
 module.exports = function (paths, globs = [`${paths.var}/*`, `${paths.dist}/*`]) {
 
 	function main() {
-		console.log(process.cwd(), paths.dist);
 		return gulp
 			.src(globs, {
 				allowEmpty: true,

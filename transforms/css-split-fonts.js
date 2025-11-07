@@ -1,6 +1,6 @@
 const csssubset = require('../lib/css-subset');
 const Stream = require('stream');
-const {extract, drop} = require('../postcss/fonts-subset');
+const {extract, drop} = require('../postcss/extract-fonts');
 
 module.exports = function ({filter, remove = false}) {
 	var stream = new Stream.Transform({objectMode: true});
@@ -9,7 +9,7 @@ module.exports = function ({filter, remove = false}) {
 			return complete();
 		}
 
-		if (filter && !filter(file)) {
+		if (filter && !filter(file.relative)) {
 			return complete(null, file);
 		}
 

@@ -1,10 +1,12 @@
+const fs = require('node:fs');
 const gulp = require('gulp');
-const postcss = require('gulp-tasks/lib/stream-postcss');
-const renameScssToCss = require('gulp-tasks/lib/scss-to-css');
+const postcss = require('../lib/stream-postcss');
+const renameScssToCss = require('../lib/scss-to-css');
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
-const touch = require('gulp-tasks/lib/touch');
+const touch = require('../lib/touch');
 const exec = require('gulp-exec');
+const path = require('path');
 
 module.exports = function (
 	{
@@ -18,25 +20,26 @@ module.exports = function (
 		],
 		cachebust,
 		fontsDataFile,
+		fontSubsetFile,
 		fonts,
 		aliases = {},
-		filter = file => file.basename === 'main.css',
+		filter = file => path.basename(file) === 'main.css',
 		plugins = [
-			require('postcss-pxtorem')(require('gulp-tasks/defaults/pxtorem')),
+			require('postcss-pxtorem')(require('../defaults/pxtorem')),
 			require('postcss-preset-env'),
-			require('gulp-tasks/postcss/font-fallback')(fonts, filter),
-			require('gulp-tasks/postcss/ttf-to-woff')(),
+			require('../postcss/font-fallback')(fonts, filter),
+			require('../postcss/font-subset-mapping')(fontSubsetFile),
 		],
 		production_plugins = [
-			require('gulp-tasks/postcss/cachebust')(cachebust),
+			require('../postcss/cachebust')(cachebust),
 			require('cssnano'),
 		],
 		postprod = function (workflow) {
 			return workflow
-				.pipe(require('gulp-tasks/transforms/css-font-metadata')({output: fontsDataFile, filter, aliases}))
-				.pipe(require('gulp-tasks/transforms/css-split-fonts')({filter}))
-				.pipe(require('gulp-tasks/transforms/css-split-print-screen')({filter}))
-				.pipe(require('gulp-tasks/transforms/css-split-mobile-desktop')({filter}));
+				.pipe(require('../transforms/css-font-metadata')({output: fontsDataFile, filter, aliases}))
+				.pipe(require('../transforms/css-split-fonts')({filter}))
+				.pipe(require('../transforms/css-split-print-screen')({filter}))
+				.pipe(require('../transforms/css-split-mobile-desktop')({filter}));
 		}
 	}
 ) {
@@ -52,7 +55,7 @@ module.exports = function (
 	function main(done) {
 
 		let workflow = gulp.src(globs, {base: paths.src, sourcemaps: true})
-			.pipe(require('gulp-tasks/transforms/sass-dart')())
+			.pipe(require('../transforms/sass-dart')())
 			.pipe(exec.reporter({err: true, strerr: true, stdout: false}))
 			.pipe(rename(renameScssToCss))
 			.pipe(postcss(plugins))

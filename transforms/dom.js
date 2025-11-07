@@ -17,8 +17,8 @@ module.exports = function ({plugins = [], options = {}}) {
 			.then(dom => {
 				return {
 					file: file,
-					from: file.path,
-					to: options.to || file.path,
+					from: file.relative,
+					to: options.to || file.relative,
 					dom: dom,
 					document: dom.window.document,
 				};

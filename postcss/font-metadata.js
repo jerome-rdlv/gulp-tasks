@@ -1,6 +1,7 @@
-const path = require('path');
+const asset = require('../lib/asset');
 const valueParser = require('postcss-value-parser');
 const {isEqual} = require('lodash');
+const cssRuleMetadata = require('../lib/css-rule-metadata');
 
 function getFamily(value, aliases = {}) {
 	if (value.type !== 'word' && (value.type !== 'function' || value.value !== 'var')) {
@@ -34,6 +35,10 @@ const props = new RegExp(`${[
 	'font-style',
 ].join('|')}`);
 
+function key(font) {
+	return require('crypto').createHash('md5').update(`${font.family}|${JSON.stringify(font.opts)}`).digest().toString('hex');
+}
+
 module.exports = function (aliases) {
 	const metadata = {};
 	return {
@@ -41,15 +46,13 @@ module.exports = function (aliases) {
 		data: metadata,
 		AtRule: {
 			'font-face': (rule, {result}) => {
-				const font = {family: null, opts: {}, src: null, flags: {}};
-				rule.walkComments(comment => {
-					try {
-						Object.entries(JSON.parse(comment.text.replace(/^!/, ''))).forEach(([prop, value]) => {
-							font.flags[prop] = value;
-						});
-					} catch {
-					}
+				const font = {family: null, opts: {}, subsets: [], flags: {}};
+
+				Object.entries(cssRuleMetadata.get(rule)).forEach(([prop, value]) => {
+					font.flags[prop] = value;
 				});
+				cssRuleMetadata.clear(rule);
+
 				rule.walkDecls(props, decl => {
 					switch (decl.prop) {
 						case 'font-family':
@@ -64,13 +67,16 @@ module.exports = function (aliases) {
 							if (src.type !== 'function' || src.value !== 'url') {
 								return;
 							}
-							font.src = path.normalize(`${path.dirname(result.opts.to)}/${src.nodes[0].value}`);
-							let key = font.src.split('/');
-							font.key = key[key.length - 1].split('.')[0];
+
+							font.src = asset.resolve(src.nodes[0].value, result.opts.from).replace(/#.*$/, '');
+							if (font.flags.subset) {
+								font.subsets[font.flags.subset] = font.src;
+								delete font.src;
+							}
 							return;
 					}
 				});
-				if (!font.src) {
+				if (!Object.values(font.subsets).length) {
 					return;
 				}
 				if (!metadata[font.family]) {
@@ -79,7 +85,18 @@ module.exports = function (aliases) {
 						fonts: [],
 					};
 				}
-				metadata[font.family].fonts.push(font);
+
+				font.key = key(font);
+				const existing = metadata[font.family].fonts.find(candidate => candidate.key === font.key);
+
+				if (existing) {
+					existing.subsets = {...existing.subsets, ...font.subsets};
+				} else {
+					metadata[font.family].fonts.push(font);
+				}
+
+				delete font.flags.subset;
+				delete font.family;
 			},
 		},
 		Declaration: {

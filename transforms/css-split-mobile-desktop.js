@@ -13,7 +13,7 @@ module.exports = function ({filter, breakpoint = 26}) {
 			return complete('Streams are not supported!', file);
 		}
 
-		if (!breakpoint || (filter && !filter(file))) {
+		if (!breakpoint || (filter && !filter(file.relative))) {
 			return complete(null, file);
 		}
 

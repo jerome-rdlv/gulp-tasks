@@ -92,7 +92,7 @@ module.exports = (fallbacks = {}, filter) => {
 		postcssPlugin: 'font-fallback',
 		AtRule: {
 			'font-face': async function (rule, {result}) {
-				if (filter && !filter(result.opts.file)) {
+				if (filter && !filter(result.opts.to)) {
 					return;
 				}
 

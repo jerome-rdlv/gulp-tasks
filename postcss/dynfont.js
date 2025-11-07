@@ -28,7 +28,7 @@ function getNode(rule, prop) {
 
 module.exports = () => {
 	return {
-		postcssPlugin: 'ttf-to-woff',
+		postcssPlugin: 'dynfont',
 		AtRule: {
 			'font-face': async function (rule, {result}) {
 				const node = getNode(rule, 'src');

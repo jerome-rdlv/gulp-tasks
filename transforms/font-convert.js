@@ -1,27 +1,27 @@
 const fontverter = require('fontverter');
 const through = require('through2');
 
-module.exports = function () {
+module.exports = function (formats = {woff2: 'woff2', woff: 'woff'}) {
 
-	function convert(transform, file, format) {
+	function convert(file, format, extname) {
 		console.log(`convert ${file.relative} to ${format}`);
 		return fontverter.convert(file.contents, format).then(buffer => {
-			file.extname = `.${format}`;
+			file.extname = `.${extname}`;
 			file.contents = buffer;
-			transform.push(file);
+			file.format = format;
+			return file;
 		});
 	}
 
 	return through.obj(function (file, encoding, complete) {
-
-		if (/\.woff2?$/.test(file.extname)) {
-			return complete(null, file);
-		}
-
-		const targets = ['woff', 'woff2'];
-
-		Promise.all(targets.map(format => {
-			return convert(this, file.clone(), format);
-		})).then(() => complete());
+		Promise.all(Object.entries(formats).map(([extname, format]) => {
+			return file.extname.substr(1) !== extname
+				? convert(file.clone(), format, extname)
+				: null;
+		})).then((files) => {
+			// important: push files here to maintain formats order
+			files.forEach(file => this.push(file));
+			complete();
+		});
 	});
 };
