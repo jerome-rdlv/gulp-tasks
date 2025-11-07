@@ -1,6 +1,7 @@
 const asset = require('../lib/asset');
 const {generateFontFace} = require('fontaine');
 const path = require('path');
+const fs = require('fs');
 const srcParser = require('css-font-face-src');
 const processed = Symbol('processed');
 const PluginError = require('plugin-error');
@@ -32,6 +33,10 @@ module.exports = (mappingFile) => {
 				// parse and keep only eligible sources with url
 				let sources = srcParser.parse(node.value).filter(({url}) => url);
 				if (!sources.length) {
+					return;
+				}
+
+				if (!fs.existsSync(mappingFile)) {
 					return;
 				}
 
@@ -80,7 +85,7 @@ module.exports = (mappingFile) => {
 					// remove possible existing unicode-range
 					clone.nodes.filter(node => node.type === 'decl' && node.prop === 'unicode-range').forEach(node => node.remove());
 
-					clone.append(new Declaration({prop: 'unicode-range', value: range}));
+					count > 1 && clone.append(new Declaration({prop: 'unicode-range', value: range}));
 				});
 
 				rule.remove();

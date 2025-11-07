@@ -27,7 +27,7 @@ module.exports = function (
 		plugins = [
 			require('postcss-pxtorem')(require('../defaults/pxtorem')),
 			require('postcss-preset-env'),
-			require('../postcss/font-fallback')(fonts, filter),
+			require('../postcss/font-fallback')(fonts, filter, paths.src),
 			require('../postcss/font-subset-mapping')(fontSubsetFile),
 		],
 		production_plugins = [

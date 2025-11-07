@@ -5,12 +5,15 @@ const gulp = require('gulp');
 const touch = require('../lib/touch');
 const fs = require('node:fs/promises');
 const hasChangedFactory = require('../lib/has-changed-factory');
+const mapping = require('../lib/fonts-mapping');
 
 module.exports = function (
 	{
 		paths,
 		globs = `${paths.src}/font/*.{woff,woff2}`,
 		statsDataFile = `${paths.var}/stats.json`,
+		fontSubsetFile,
+		formats = {woff2: 'woff2', woff: 'woff'},
 	}
 ) {
 
@@ -19,9 +22,12 @@ module.exports = function (
 	function getsubsets(file) {
 		try {
 			const stats = require(statsDataFile);
-			return stats.text[stats.table[file.stem] || file.stem] || stats.text.all;
+			return [{
+				name: 'custom',
+				text: stats.text[stats.table[file.stem] || file.stem] || stats.text.all
+			}];
 		} catch (e) {
-			return '';
+			return false;
 		}
 	}
 
@@ -37,8 +43,9 @@ module.exports = function (
 				extension: '.woff2',
 				hasChanged: hasChangedFactory(includes)
 			}))
-			.pipe(fontconvert())
 			.pipe(fontsubset.transform(getsubsets))
+			.pipe(fontconvert(formats))
+			.pipe(mapping(fontSubsetFile, paths))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
 			;

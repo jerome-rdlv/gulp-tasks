@@ -55,7 +55,9 @@ exports.transform = function (subsets) {
 			}).then(buffer => {
 				const clone = file.clone({contents: false});
 				clone.contents = buffer;
-				clone.stem = `${clone.stem}.${name}`;
+				if (fsubsets.length > 1) {
+					clone.stem = `${clone.stem}.${name}`;
+				}
 				clone.subset = {range, name};
 				return clone;
 			});

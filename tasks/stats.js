@@ -14,7 +14,7 @@ function getText(nodes, properties) {
 	}
 }
 
-function generateTable(output, exclude, fonts) {
+function generateTable(outputPath, exclude, fonts) {
 	const classes = new Set();
 	const ids = new Set();
 	const text = {all: ''};
@@ -57,14 +57,19 @@ function generateTable(output, exclude, fonts) {
 			Object.keys(text).forEach(key => {
 				text[key] = Array.from(new Set(text[key])).sort((a, b) => a.codePointAt(0) - b.codePointAt(0)).join('');
 			});
-			fs.writeFile(output, Buffer.from(JSON.stringify({
-					table,
-					text,
-					classes: Array.from(classes),
-					ids: Array.from(ids),
-				}, null, '\t')
-			))
-				.then(complete);
+
+			const content = JSON.stringify({
+				table,
+				text,
+				classes: Array.from(classes),
+				ids: Array.from(ids),
+			}, null, '\t');
+
+			fs.readFile(outputPath)
+				.catch(() => '')
+				// do not write again if content did not change, preserve file mtime
+				.then(old => content !== old.toString() ? fs.writeFile(outputPath, Buffer.from(content)) : null)
+				.then(() => complete());
 		} catch (error) {
 			complete(error);
 		}

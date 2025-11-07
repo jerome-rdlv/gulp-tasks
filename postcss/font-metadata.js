@@ -1,3 +1,4 @@
+const path = require('path');
 const asset = require('../lib/asset');
 const valueParser = require('postcss-value-parser');
 const {isEqual} = require('lodash');
@@ -35,7 +36,7 @@ const props = new RegExp(`${[
 	'font-style',
 ].join('|')}`);
 
-function key(font) {
+function hash(font) {
 	return require('crypto').createHash('md5').update(`${font.family}|${JSON.stringify(font.opts)}`).digest().toString('hex');
 }
 
@@ -46,7 +47,7 @@ module.exports = function (aliases) {
 		data: metadata,
 		AtRule: {
 			'font-face': (rule, {result}) => {
-				const font = {family: null, opts: {}, subsets: [], flags: {}};
+				const font = {family: null, opts: {}, subsets: {}, flags: {}};
 
 				Object.entries(cssRuleMetadata.get(rule)).forEach(([prop, value]) => {
 					font.flags[prop] = value;
@@ -69,6 +70,7 @@ module.exports = function (aliases) {
 							}
 
 							font.src = asset.resolve(src.nodes[0].value, result.opts.from).replace(/#.*$/, '');
+							font.key = path.basename(font.src).split('.')[0];
 							if (font.flags.subset) {
 								font.subsets[font.flags.subset] = font.src;
 								delete font.src;
@@ -76,9 +78,11 @@ module.exports = function (aliases) {
 							return;
 					}
 				});
-				if (!Object.values(font.subsets).length) {
+
+				if (!font.src && !Object.values(font.subsets).length) {
 					return;
 				}
+
 				if (!metadata[font.family]) {
 					metadata[font.family] = {
 						family: font.family,
@@ -86,10 +90,14 @@ module.exports = function (aliases) {
 					};
 				}
 
-				font.key = key(font);
-				const existing = metadata[font.family].fonts.find(candidate => candidate.key === font.key);
+				if (!Object.values(font.subsets).length) {
+					delete font.subsets;
+				}
 
-				if (existing) {
+				font.hash = hash(font);
+				const existing = metadata[font.family].fonts.find(candidate => candidate.hash === font.hash);
+
+				if (font.subsets && existing) {
 					existing.subsets = {...existing.subsets, ...font.subsets};
 				} else {
 					metadata[font.family].fonts.push(font);

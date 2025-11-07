@@ -1,3 +1,4 @@
+const asset = require('../lib/asset');
 const fs = require('fs');
 const srcParser = require('css-font-face-src');
 const {generateFontFace} = require('fontaine');
@@ -78,7 +79,7 @@ function parseFontFace(rule, base) {
 
 	// resolve src for hosted fonts
 	for (const source of font.src) {
-		const p = path.resolve(base + source.url);
+		const p = path.resolve(asset.resolve(source.url, base));
 		if (fs.existsSync(p)) {
 			source.url = p;
 		}
@@ -87,7 +88,7 @@ function parseFontFace(rule, base) {
 	return font;
 }
 
-module.exports = (fallbacks = {}, filter) => {
+module.exports = (fallbacks = {}, filter, base) => {
 	return {
 		postcssPlugin: 'font-fallback',
 		AtRule: {
@@ -96,7 +97,7 @@ module.exports = (fallbacks = {}, filter) => {
 					return;
 				}
 
-				const font = parseFontFace(rule, path.dirname(result.opts.to) + '/');
+				const font = parseFontFace(rule, `${base}/${result.opts.from}`);
 				if (!font) {
 					// no font found
 					return;
@@ -125,7 +126,7 @@ module.exports = (fallbacks = {}, filter) => {
 					fallbacks[font.family] = generics[fallbacks[font.family]];
 				}
 
-				for (const fallback of fallbacks[font.family].reverse()) {
+				for (const fallback of fallbacks[font.family]) {
 					const fallbackMetrics = await getMetrics(fallback.font || fallback);
 					if (!fallbackMetrics) {
 						console.warn(`No metrics found for fallback font: ${fallback.font || fallback}`);

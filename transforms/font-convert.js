@@ -15,9 +15,11 @@ module.exports = function (formats = {woff2: 'woff2', woff: 'woff'}) {
 
 	return through.obj(function (file, encoding, complete) {
 		Promise.all(Object.entries(formats).map(([extname, format]) => {
-			return file.extname.substr(1) !== extname
-				? convert(file.clone(), format, extname)
-				: null;
+			if (file.extname.substr(1) !== extname) {
+				return convert(file.clone(), format, extname);
+			}
+			file.format = format;
+			return file;
 		})).then((files) => {
 			// important: push files here to maintain formats order
 			files.forEach(file => this.push(file));
