@@ -6,7 +6,7 @@ const gulp = require('gulp');
 const touch = require('../lib/touch');
 const mapping = require('../lib/fonts-mapping')
 
-exports.tasks = function (
+module.exports = function (
 	{
 		paths,
 		globs = `${paths.src}/font/*.{otf,ttf,woff,woff2}`,

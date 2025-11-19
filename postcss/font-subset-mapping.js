@@ -31,7 +31,7 @@ module.exports = (mappingFile) => {
 				}
 
 				// parse and keep only eligible sources with url
-				let sources = srcParser.parse(node.value).filter(({url}) => url);
+				let sources = srcParser.parse(node.value).filter(({url}) => url && !/^data:/.test(url));
 				if (!sources.length) {
 					return;
 				}
