@@ -2,12 +2,16 @@ const changed = require('gulp-changed');
 const clearSvgParams = require('../transforms/clear-svg-params');
 const dom = require('../transforms/dom');
 const fs = require('fs');
+const globParent = require('glob-parent');
 const gulp = require('gulp');
+const path = require('path');
 const rename = require('gulp-rename');
 const svgToScss = require('../transforms/svg-to-scss');
 const touch = require('../lib/touch');
 
-module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg`]) {
+module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg`], base) {
+
+	base = base || path.relative(paths.src, globParent(globs[0]));
 
 	const plugins = [
 		require('../dom/svgo-disabled'),
@@ -31,7 +35,7 @@ module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
 			// svg availability for inclusion as inline symbol in html
-			.pipe(dom({plugins: [require('../dom/svg-to-symbol')]}))
+			.pipe(dom({plugins: [require('../dom/svg-to-symbol')(base)]}))
 			.pipe(rename(path => path.extname = '.symbol.svg'))
 			.pipe(gulp.dest(paths.dist))
 			;
@@ -46,7 +50,7 @@ module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg
 			template = __dirname + '/../svg.scss.mustache';
 		}
 
-		return gulp.src(globs, {base: paths.src + '/svg'})
+		return gulp.src(globs, {base: paths.src + (base ? `/${base}` : '')})
 			.pipe(svgo())
 			.pipe(dom({plugins}))
 			.pipe(svgToScss({

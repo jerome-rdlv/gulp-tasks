@@ -52,11 +52,12 @@ module.exports = function ({template, output} = {}) {
 			});
 
 		const parts = path.parse(file.relative);
-		const filename = (parts.dir ? parts.dir + '/' : '').replace('/', '__') + parts.name;
+		const key = (parts.dir ? parts.dir + '/' : '').replace('/', '--') + parts.name;
 
 		items.push({
 			dataurl: 'data:image/svg+xml,' + encoded,
-			filename: filename,
+			key: key,
+			filename: file.relative,
 			width: dims[2],
 			height: dims[3],
 			variables: '(' + vars
