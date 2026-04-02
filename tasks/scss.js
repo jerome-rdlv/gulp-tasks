@@ -1,4 +1,3 @@
-const fs = require('node:fs');
 const gulp = require('gulp');
 const postcss = require('../lib/stream-postcss');
 const renameScssToCss = require('../lib/scss-to-css');
@@ -40,7 +39,8 @@ module.exports = function (
 				.pipe(require('../transforms/css-split-fonts')({filter}))
 				.pipe(require('../transforms/css-split-print-screen')({filter}))
 				.pipe(require('../transforms/css-split-mobile-desktop')({filter}));
-		}
+		},
+		sassTransform = require('../transforms/sass-dart'),
 	}
 ) {
 
@@ -52,14 +52,13 @@ module.exports = function (
 		plugins.push(...production_plugins);
 	}
 
-	function main(done) {
+	function main() {
 
 		let workflow = gulp.src(globs, {base: paths.src, sourcemaps: true})
-			.pipe(require('../transforms/sass-dart')())
-			.pipe(exec.reporter({err: true, strerr: true, stdout: false}))
+			.pipe(sassTransform()).on('error', handleError)
 			.pipe(rename(renameScssToCss))
-			.pipe(postcss(plugins))
-			.on('error', done);
+			.pipe(postcss(plugins)).on('error', handleError)
+		;
 
 		if (typeof postprod === 'function') {
 			workflow = postprod.call(null, workflow);
@@ -72,13 +71,17 @@ module.exports = function (
 		return workflow;
 	}
 
-	main.displayName = 'scss';
-
 	function watch() {
 		return gulp.watch(watched, main);
 	}
 
+	main.displayName = 'scss';
 	watch.displayName = 'scss:watch';
 
 	return {main, watch};
+}
+
+function handleError(error) {
+	console.log(error.toString());
+	this.emit('end');
 }

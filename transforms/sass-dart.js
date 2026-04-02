@@ -1,53 +1,35 @@
-const applySourceMap = require('vinyl-sourcemaps-apply');
-const path = require('path');
+const applySourceMap = require('../lib/apply-sass-sourcemaps');
 const PluginError = require('plugin-error');
+const sass = require('sass-embedded');
 const through = require('through2');
-const exec = require('child_process').exec;
-const convertSourceMap = require('convert-source-map');
+const {NodePackageImporter} = require('sass-embedded');
+const Stream = require('stream')
 
-function fixSourceMaps() {
-	return through.obj(function (file, encoding, complete) {
-		complete(null, file);
-	});
-}
-
-module.exports = function (opts) {
-	const args = Object.entries({
-		// silenceDeprecation: ['mixed-decls'],
-		...opts,
-	}).map(([arg, value]) => {
-		return `--${arg.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}=${value instanceof Array ? value.join(',') : value}`;
-	}).join(' ');
-
-	return through.obj(function (file, enc, cb) {
-		const cmd = `sass --embed-source-map --embed-sources ${args} "${file.base}/${file.relative}"`;
-		exec(cmd, (err, stdout, stderr) => {
-			if (err) {
-				throw new PluginError('sass', err);
-			}
-
-			if (file.sourceMap) {
-				// fix sourceMaps
-				const map = convertSourceMap.fromSource(
-					// convertSourceMap.fromSource does not support commas inside comment
-					stdout.toString()
-						.replace(/,/g, '%2C')
-						.replace(/(sourceMappingURL=data:application\/json)(;charset=utf-8)?%2C/, '$1$2,')
-				)?.toObject();
-				map.file = file.relative;
-				map.sources = [].map.call(map.sources, function (source) {
-					// make source relative to file and fix path prefix
-					source = path.relative(path.dirname(file.path), decodeURI(source.replace(/^file:\/\//, '')));
-					return source;
-				});
-				applySourceMap(file, map);
-
-				stdout = convertSourceMap.removeComments(stdout);
-			}
-
-			file.contents = Buffer.from(stdout);
-
-			cb(null, file);
-		});
-	});
+module.exports = function (opts = {
+	charset: false,
+	sourceMapIncludeSources: true,
+	importers: [
+		new NodePackageImporter(),
+	],
+}) {
+	var stream = new Stream.Transform({objectMode: true})
+	stream._transform = function (file, encoding, cb) {
+		sass
+			.compileAsync(file.path, {
+				...opts,
+				sourceMap: !!file.sourceMap,
+			})
+			.then(result => {
+				applySourceMap(file, result.sourceMap);
+				file.contents = Buffer.from(result.css);
+				cb(null, file);
+			})
+			.catch(error => {
+				cb(new PluginError('sass-dart', `${error.toString()}\nFile: ${error.span.url.href}`, {
+					fileName: file.path,
+					showProperties: false,
+				}));
+			});
+	};
+	return stream;
 };
