@@ -9,7 +9,7 @@
 	"license": "MIT",
 	"private": true,
 	"pm": "yarn",
-	"packageManager": "yarn@4.13",
+	"packageManager": "yarn@4.13.0",
 	"dependencies": {
 		"globals": "^15.8",
 		"gulp": "^5.0",
