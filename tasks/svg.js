@@ -1,5 +1,6 @@
 const changed = require('gulp-changed');
 const clearSvgParams = require('../transforms/clear-svg-params');
+const createSprites = require('../transforms/sprites');
 const dom = require('../transforms/dom');
 const fs = require('fs');
 const globParent = require('glob-parent');
@@ -9,7 +10,15 @@ const rename = require('gulp-rename');
 const svgToScss = require('../transforms/svg-to-scss');
 const touch = require('../lib/touch');
 
-module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg`], base) {
+module.exports = function (
+	{
+		paths,
+		cachebust,
+		globs = [`${paths.src}/svg/**/*.svg`],
+		base,
+		sprites,
+	}
+) {
 
 	base = base || path.relative(paths.src, globParent(globs[0]));
 
@@ -34,9 +43,16 @@ module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg
 			.pipe(dom({plugins}))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
-			// svg availability for inclusion as inline symbol in html
-			.pipe(dom({plugins: [require('../dom/svg-to-symbol')(base)]}))
-			.pipe(rename(path => path.extname = '.symbol.svg'))
+			;
+	};
+
+	const sprite = function () {
+		return gulp.src(Object.values(sprites), {base: paths.src})
+			.pipe(clearSvgParams())
+			.pipe(svgo())
+			.pipe(dom({plugins}))
+			.pipe(createSprites(sprites))
+			.pipe(touch())
 			.pipe(gulp.dest(paths.dist))
 			;
 	};
@@ -65,13 +81,14 @@ module.exports = function (paths, cachebust, globs = [`${paths.src}/svg/**/*.svg
 	const watch = function () {
 		return gulp.watch(
 			[...globs, `${paths.src}/svg.scss.mustache`],
-			gulp.parallel(main, scss)
+			gulp.parallel(main, sprite, scss)
 		);
 	};
 
 	main.displayName = 'svg';
+	sprite.displayName = 'svg:sprite';
 	scss.displayName = 'svg:scss';
 	watch.displayName = 'svg:watch';
 
-	return {main, scss, watch};
+	return {main, sprite, scss, watch};
 };
