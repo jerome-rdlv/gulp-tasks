@@ -4,7 +4,8 @@ const fontsubset = require('../transforms/font-subset');
 const fs = require('node:fs/promises');
 const gulp = require('gulp');
 const touch = require('../lib/touch');
-const mapping = require('../lib/fonts-mapping')
+const mapping = require('../lib/fonts-mapping');
+const path = require('path');
 
 module.exports = function (
 	{
@@ -16,6 +17,13 @@ module.exports = function (
 	}
 ) {
 	function main() {
+
+		if (!fontSubsetFile) {
+			throw new Error('Must give a fontSubsetFile argument, to store subsets data.');
+		}
+
+		fs.mkdir(path.dirname(fontSubsetFile), {recursive: true});
+
 		return gulp.src(globs, {
 			allowEmpty: true,
 			base: paths.src,
