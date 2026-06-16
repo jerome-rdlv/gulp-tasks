@@ -7,14 +7,19 @@ const fs = require('node:fs/promises');
 const jsdom = require('jsdom').JSDOM;
 const path = require('path');
 const Vinyl = require('vinyl');
+const anymatch = require('anymatch');
+const toAbsoluteGlob = require('@gulpjs/to-absolute-glob');
+const objectMap = require('../lib/object-map');
 
 module.exports = function (sources) {
 
-	const sprites = Object.fromEntries(Object.keys(sources).map(key => [key, []]));
+	const sprites = objectMap(sources, () => []);
+	const matchers = objectMap(sources, matchers => (Array.isArray(matchers) ? matchers : [matchers])
+		.map(m => toAbsoluteGlob(m, {cwd: path.resolve(process.cwd())})));
 
 	function eachFile(file, encoding, complete) {
-		for (const [output, glob] of Object.entries(sources)) {
-			if (file.dirname.endsWith(path.dirname(glob))) {
+		for (const [output, m] of Object.entries(matchers)) {
+			if (anymatch(m, file.path)) {
 				sprites[output].push(file);
 				break;
 			}
@@ -47,7 +52,6 @@ module.exports = function (sources) {
 
 				symbol.setAttribute('id', file.stem);
 				symbol.append(...svg.childNodes);
-				// sprite.window.document.documentElement.append(sprite.window.document.importNode(symbol, true));
 				sprite.window.document.documentElement.append(symbol);
 			});
 

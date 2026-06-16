@@ -22,6 +22,9 @@ module.exports = function (
 
 	base = base || path.relative(paths.src, globParent(globs[0]));
 
+	const tasks = {};
+	const watched = [...globs, `${paths.src}/svg.scss.mustache`];
+
 	const plugins = [
 		require('../dom/svgo-disabled'),
 	];
@@ -35,7 +38,7 @@ module.exports = function (
 
 	const svgo = () => require('../transforms/svgo')(require('../lib/svgo-config')(require('../defaults/svgo')));
 
-	const main = function () {
+	tasks.main = function () {
 		return gulp.src(globs, {base: paths.src})
 			.pipe(changed(paths.dist))
 			.pipe(clearSvgParams())
@@ -45,21 +48,26 @@ module.exports = function (
 			.pipe(gulp.dest(paths.dist))
 			;
 	};
+	tasks.main.displayName = 'svg';
 
-	const sprite = function () {
-		return gulp.src(Object.values(sprites), {base: paths.src})
-			.pipe(clearSvgParams())
-			.pipe(svgo())
-			.pipe(dom({plugins}))
-			.pipe(createSprites(sprites))
-			.pipe(touch())
-			.pipe(gulp.dest(paths.dist))
-			;
-	};
+	if (sprites) {
+		const spriteGlobs = Object.values(sprites).flat();
+		watched.push(...spriteGlobs);
+		tasks.sprite = function () {
+			return gulp.src(spriteGlobs, {base: paths.src, allowEmpty: true})
+				.pipe(clearSvgParams())
+				.pipe(svgo())
+				.pipe(dom({plugins}))
+				.pipe(createSprites(sprites))
+				.pipe(touch())
+				.pipe(gulp.dest(paths.dist))
+				;
+		};
+		tasks.sprite.displayName = 'svg:sprite';
+	}
 
 	// svg availability in SCSS
-	const scss = function () {
-
+	tasks.scss = function () {
 		// look for template
 		let template = paths.src + '/svg.scss.mustache';
 		if (!fs.existsSync(template)) {
@@ -77,18 +85,17 @@ module.exports = function (
 			.pipe(gulp.dest(paths.var))
 			;
 	};
+	tasks.scss.displayName = 'svg:scss';
 
-	const watch = function () {
+	const subs = Object.values(tasks);
+	tasks.watch = function () {
 		return gulp.watch(
-			[...globs, `${paths.src}/svg.scss.mustache`],
-			gulp.parallel(main, sprite, scss)
+			watched,
+			gulp.parallel(...subs)
 		);
 	};
 
-	main.displayName = 'svg';
-	sprite.displayName = 'svg:sprite';
-	scss.displayName = 'svg:scss';
-	watch.displayName = 'svg:watch';
+	tasks.watch.displayName = 'svg:watch';
 
-	return {main, sprite, scss, watch};
+	return tasks;
 };
