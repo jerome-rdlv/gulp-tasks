@@ -17,6 +17,7 @@ module.exports = function (
 		globs = [`${paths.src}/svg/**/*.svg`],
 		base,
 		sprites,
+		scssOutput = '_svg.scss',
 	}
 ) {
 
@@ -79,7 +80,7 @@ module.exports = function (
 			.pipe(dom({plugins}))
 			.pipe(svgToScss({
 				template: template,
-				output: '_svg.scss'
+				output: scssOutput
 			}))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.var))
