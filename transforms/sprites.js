@@ -44,7 +44,7 @@ module.exports = function (sources) {
 				const svg = document.firstChild;
 				const symbol = document.createElementNS(svg.getAttribute('xmlns'), 'symbol');
 
-				['viewBox', 'preserveAspectRatio'].forEach(attr => {
+				['viewBox', 'preserveAspectRatio', 'width', 'height'].forEach(attr => {
 					if (svg.hasAttribute(attr)) {
 						symbol.setAttribute(attr, svg.getAttribute(attr));
 					}
