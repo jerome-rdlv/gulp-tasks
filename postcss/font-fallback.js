@@ -43,7 +43,7 @@ async function getMetrics(source) {
 	const {protocol} = ufo.parseURL(/^\//.test(source) ? `file://${source}` : source);
 	const metrics = await (
 		protocol
-			? (protocol === 'file:' ? unpack.fromFile(source) : unpack.fromUrl(source))
+			? (protocol === 'file:' ? unpack.fromBuffer(fs.readFileSync(source)) : unpack.fromUrl(source))
 			: getMetricsForFamily(source)
 	);
 	metricsCache[source] = metrics;
