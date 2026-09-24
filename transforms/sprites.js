@@ -32,27 +32,38 @@ module.exports = function (sources) {
 			if (!files.length) {
 				return;
 			}
+
+			const atts = ['viewBox', 'preserveAspectRatio', 'width', 'height'];
+
 			const sprite = new jsdom('<svg xmlns="http://www.w3.org/2000/svg"/>', {
 				contentType: 'image/svg+xml',
 			});
+
+			const doc = sprite.window.document.documentElement;
+
+			const style = doc.ownerDocument.createElementNS(doc.getAttribute('xmlns'), 'style');
+			style.innerHTML = 'svg:not(:target){display:none;}';
+			doc.append(style);
 
 			files.forEach(function (file) {
 				const dom = new jsdom(file.contents.toString('utf8'), {
 					contentType: 'image/svg+xml',
 				});
-				const document = dom.window.document;
-				const svg = document.firstChild;
-				const symbol = document.createElementNS(svg.getAttribute('xmlns'), 'symbol');
+				const svg = dom.window.document.firstChild;
 
-				['viewBox', 'preserveAspectRatio', 'width', 'height'].forEach(attr => {
+				Array.prototype.forEach.call(svg.attributes, attr => {
+					atts.indexOf(attr.name) === -1 && svg.removeAttribute(attr.name);
+				});
+
+				['width', 'height'].forEach(attr => {
 					if (svg.hasAttribute(attr)) {
-						symbol.setAttribute(attr, svg.getAttribute(attr));
+						svg.dataset[attr] = svg.getAttribute(attr);
+						svg.removeAttribute(attr);
 					}
 				});
 
-				symbol.setAttribute('id', file.stem);
-				symbol.append(...svg.childNodes);
-				sprite.window.document.documentElement.append(symbol);
+				svg.setAttribute('id', file.stem);
+				doc.append(svg);
 			});
 
 			this.push(new Vinyl({
