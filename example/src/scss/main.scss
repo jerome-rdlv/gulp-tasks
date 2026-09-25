@@ -1,21 +1,23 @@
 @font-face {
-	font-family: 'droid';
-	src: url('../font/droidserif-regular.woff2') format('woff2');
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'bitter';
-	src: url('../font/bitter_wght.woff2') format('woff2');
+	/*!md:{"preload":true}*/
+	font-family: 'Bitter';
+	src: url('#{'../font/Bitter-VariableFont_wght.ttf'}') format('truetype');
 	font-weight: 100 1000;
 	font-style: normal;
 	font-display: swap;
 }
 
+@font-face {
+	/*!md:{"preload":true}*/
+	font-family: 'Poppins';
+	src: url('#{'../font/Poppins-Regular.ttf'}') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 body {
-	font-family: droid, sans-serif;
+	font-family: Poppins, sans-serif;
 	color: red;
 	font-size: 16px;
 
@@ -33,7 +35,7 @@ div.image {
 }
 
 h1 {
-	font-family: 'bitter', sans-serif;
+	font-family: 'Bitter', sans-serif;
 	color: #777;
 }
 

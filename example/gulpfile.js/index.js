@@ -7,6 +7,7 @@ const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
 const path = require('path');
 const {globSync} = require('glob');
+const spritesGlob = require('../../lib/sprites-glob');
 
 process.on('unhandledRejection', reason => {
 	throw reason;
@@ -29,6 +30,7 @@ const paths = {
 // must be published for PHP font preload auto configuration
 const fontsDataFile = path.resolve(`${paths.dist}/fonts.json`);
 const statsDataFile = path.resolve(`${paths.var}/stats.json`);
+const fontSubsetFile = path.resolve(`${paths.var}/subsets.json`);
 
 const cachebust = require('../../lib/cachebust')(paths);
 
@@ -37,9 +39,14 @@ const clean = require('../../tasks/clean')(paths);
 const img = require('../../tasks/img')(paths);
 const criticalLocal = require('../../tasks/critical-local')(paths);
 const criticalRemote = require('../../tasks/critical-remote')(paths);
-const svg = require('../../tasks/svg')(paths, cachebust);
 const html = require('../../tasks/html')(paths, cachebust);
-const font = require('../../tasks/dynfont')({paths});
+const font = require('../../tasks/dynfont')({paths, fontSubsetFile});
+
+const svg = require('../../tasks/svg')({
+	paths,
+	cachebust,
+	sprites: spritesGlob(`sprites/*`, paths.src),
+});
 
 const copy = require('../../tasks/copy')(paths, [
 	`${paths.src}/*.html`,
@@ -50,7 +57,7 @@ const js = require('../../tasks/js')({
 	globs: [
 		...globSync(`${paths.src}/js/inline/*.js`),
 		`${paths.src}/js/main.js`,
-		{import: `${paths.src}/js/form.js`, dependOn: 'js/main.js'},
+		{import: `${paths.src}/js/reveal.js`, dependOn: 'js/main.js'},
 	],
 });
 
@@ -58,9 +65,10 @@ const scss = require('../../tasks/scss')({
 	paths,
 	cachebust,
 	fontsDataFile,
+	fontSubsetFile,
 	fonts: {
-		'droid': ['Georgia', 'Times New Roman', 'Noto Serif'],
-		'bitter': 'serif',
+		'Bitter': 'serif',
+		'Poppins': ['Georgia', 'Times New Roman', 'Noto Serif'],
 	},
 });
 
@@ -99,23 +107,13 @@ module.exports = [
 	clean,
 	criticalLocal,
 	criticalRemote,
-	copy.main,
-	copy.watch,
-	font.main,
-	font.watch,
-	html.main,
-	html.watch,
-	img.main,
-	img.watch,
-	js.main,
-	js.watch,
-	jsil.main,
-	jsil.watch,
-	scss.main,
-	scss.watch,
-	svg.main,
-	svg.watch,
-	svg.scss,
+	...Object.values(copy),
+	...Object.values(font),
+	...Object.values(html),
+	...Object.values(img),
+	...Object.values(js),
+	...Object.values(scss),
+	...Object.values(svg),
 	main,
 	watch,
 ];
