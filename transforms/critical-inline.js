@@ -4,7 +4,7 @@ const critical = require('critical');
 module.exports = function (opts) {
 	// https://www.npmjs.com/package/critical
 	// noinspection JSCheckFunctionSignatures
-	return through.obj(function (file, encoding, complete) {
+	return through.objectTransform(function (file, encoding, complete) {
 		critical
 			.generate({
 				...opts,

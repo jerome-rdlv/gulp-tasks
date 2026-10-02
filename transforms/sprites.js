@@ -74,5 +74,5 @@ module.exports = function (sources) {
 		complete();
 	}
 
-	return through.obj(eachFile, endStream, false);
+	return through.objectTransform(eachFile, endStream, false);
 };

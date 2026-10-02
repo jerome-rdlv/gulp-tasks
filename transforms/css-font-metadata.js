@@ -19,5 +19,5 @@ module.exports = function ({output, aliases = {}, filter}) {
 		}
 	}
 
-	return through.obj(postcss([fontMetadata])._transform, endStream, false);
+	return through.objectTransform(postcss([fontMetadata])._transform, endStream, false);
 };

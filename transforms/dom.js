@@ -5,7 +5,7 @@ const lookup = require('mime-types').lookup;
 module.exports = function ({plugins = [], options = {}}) {
 
 	// noinspection JSCheckFunctionSignatures
-	return through.obj(function (file, encoding, complete) {
+	return through.objectTransform(function (file, encoding, complete) {
 		const pending = [...plugins];
 
 		Promise.resolve()

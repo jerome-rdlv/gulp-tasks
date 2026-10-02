@@ -75,7 +75,7 @@ function generateTable(outputPath, exclude, fonts) {
 		}
 	}
 
-	return through.obj(eachFile, endStream, false);
+	return through.objectTransform(eachFile, endStream, false);
 }
 
 module.exports = function (

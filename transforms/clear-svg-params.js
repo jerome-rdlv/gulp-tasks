@@ -2,7 +2,7 @@ const through = require('through2');
 
 module.exports = function () {
 	// noinspection JSCheckFunctionSignatures
-	return through.obj(function (file, encoding, complete) {
+	return through.objectTransform(function (file, encoding, complete) {
 		const contents = file.contents.toString(encoding)
 			.replace(/{\$.*?:(.*?)}/g, function () {
 				return arguments[1];

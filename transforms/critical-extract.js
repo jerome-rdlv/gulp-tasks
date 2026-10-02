@@ -5,7 +5,7 @@ const Vinyl = require('vinyl');
 module.exports = function (entries, opts, concurrency = exports.CONCURRENCY) {
 
 	// noinspection JSCheckFunctionSignatures
-	const stream = through.obj(function (file, encoding, complete) {
+	const stream = through.objectTransform(function (file, encoding, complete) {
 		complete(null, file);
 	});
 

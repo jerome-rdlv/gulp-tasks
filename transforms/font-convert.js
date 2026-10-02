@@ -13,7 +13,7 @@ module.exports = function (formats = {woff2: 'woff2', woff: 'woff'}) {
 		});
 	}
 
-	return through.obj(function (file, encoding, complete) {
+	return through.objectTransform(function (file, encoding, complete) {
 		Promise.all(Object.entries(formats).map(([extname, format]) => {
 			if (file.extname.substr(1) !== extname) {
 				return convert(file.clone(), format, extname);

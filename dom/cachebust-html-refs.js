@@ -12,7 +12,7 @@ const URL = require('../lib/url');
 exports.get = function (dist, cachebustUrl, getFileSignature) {
 	return function () {
 		// noinspection JSCheckFunctionSignatures
-		return through.obj(function (file, encoding, complete) {
+		return through.objectTransform(function (file, encoding, complete) {
 			const dom = new (require('jsdom').JSDOM)(file.contents.toString(encoding), {
 				contentType: 'text/html',
 			});

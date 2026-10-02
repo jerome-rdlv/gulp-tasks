@@ -75,7 +75,7 @@ exports.transform = function (subsets) {
 			});
 	}
 
-	return through.obj(eachFile);
+	return through.objectTransform(eachFile);
 };
 
 exports.FORMATS = {

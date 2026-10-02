@@ -90,5 +90,5 @@ module.exports = function ({template, output, base} = {}) {
 	}
 
 	// noinspection JSCheckFunctionSignatures
-	return through.obj(eachFile, endStream);
+	return through.objectTransform(eachFile, endStream);
 };
