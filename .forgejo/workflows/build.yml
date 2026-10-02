@@ -1,16 +1,10 @@
-#file: noinspection HttpUrlsUsage
-name: Build and deploy
+name: Build
 
 on:
     push:
         branches:
             - main
-            - staging
-            - production
     workflow_dispatch:
-
-env:
-    THEME_PATH: public/app/themes/renolux-shop
 
 jobs:
 
@@ -53,7 +47,7 @@ jobs:
                     cache: 'yarn'
                     cache-dependency-path: yarn.lock
 
-            -   name: yarn install for development
+            -   name: yarn install
                 shell: bash
                 run: yarn install --immutable
 
