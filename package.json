@@ -58,7 +58,7 @@
 		"sass-embedded": "1.105.0",
 		"subset-font": "2.9.0",
 		"svgo": "3.3.5",
-		"through2": "^4.0",
+		"through2": "^5.0.0",
 		"ufo": "1.6.4",
 		"vinyl": "^2.1",
 		"vinyl-fs": "^4.0",
