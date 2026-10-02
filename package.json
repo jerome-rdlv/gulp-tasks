@@ -71,7 +71,7 @@
 	"devDependencies": {
 		"babel-loader": "10.1.1",
 		"glob-parent": "6.0.2",
-		"yargs": "17.7.2"
+		"yargs": "17.7.3"
 	},
 	"peerDependencies": {
 		"@11ty/eleventy": "*"
