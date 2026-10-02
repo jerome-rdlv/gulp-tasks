@@ -21,7 +21,7 @@ module.exports = function (
 	}
 ) {
 
-	base = base || path.relative(paths.src, globParent(globs[0]));
+	base = base || path.relative(paths.src, globParent(globs[0], {}));
 
 	const tasks = {};
 	const watched = [...globs, `${paths.src}/svg.scss.mustache`];
@@ -75,12 +75,13 @@ module.exports = function (
 			template = __dirname + '/../svg.scss.mustache';
 		}
 
-		return gulp.src(globs, {base: paths.src + (base ? `/${base}` : '')})
+		return gulp.src(globs, {base: paths.src})
 			.pipe(svgo())
 			.pipe(dom({plugins}))
 			.pipe(svgToScss({
 				template: template,
-				output: scssOutput
+				output: scssOutput,
+				base: base,
 			}))
 			.pipe(touch())
 			.pipe(gulp.dest(paths.var))

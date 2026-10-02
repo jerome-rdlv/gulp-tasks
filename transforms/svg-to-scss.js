@@ -5,8 +5,8 @@ const PluginError = require('plugin-error');
 const through = require('through2');
 const Vinyl = require('vinyl');
 
-module.exports = function ({template, output} = {}) {
-	
+module.exports = function ({template, output, base} = {}) {
+
 	template = template || `${__dirname}/../svg.scss.mustache`;
 	output = output || '_svg.scss';
 
@@ -51,8 +51,9 @@ module.exports = function ({template, output} = {}) {
 				return '{' + decodeURIComponent(arguments[2]) + '}';
 			});
 
+		file.base += '/' + base;
 		const parts = path.parse(file.relative);
-		const key = (parts.dir ? parts.dir + '/' : '').replace('/', '--') + parts.name;
+		const key = (parts.dir + '/').replace(/^[/.]+/g, '').replace('/', '--') + parts.name;
 
 		items.push({
 			dataurl: 'data:image/svg+xml,' + encoded,

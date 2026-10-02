@@ -55,6 +55,10 @@ jobs:
                 shell: bash
                 run: yarn run gulp
 
+            -   name: clean assets
+                shell: bash
+                run: yarn run gulp clean
+
             -   name: build assets prod
                 shell: bash
                 run: NODE_ENV=production yarn run gulp
