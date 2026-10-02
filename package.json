@@ -65,7 +65,7 @@
 		"vinyl-named": "1.1.0",
 		"vinyl-sourcemaps-apply": "0.2.1",
 		"webpack": "5.111.1",
-		"webpack-bundle-analyzer": "4.10.2",
+		"webpack-bundle-analyzer": "5.4.0",
 		"webpack-stream": "7.0.0"
 	},
 	"devDependencies": {
