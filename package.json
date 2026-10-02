@@ -24,7 +24,7 @@
 		"css-font-face-src": "2.1.0",
 		"css-mediaquery": "0.1.2",
 		"cssnano": "9.1.1",
-		"eslint": "9.39.5",
+		"eslint": "10.11.0",
 		"eslint-webpack-plugin": "4.2.0",
 		"fancy-log": "^2.0.0",
 		"fontaine": "0.8.2",
