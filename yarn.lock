@@ -1222,10 +1222,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capsizecss/metrics@npm:3.7.0":
-  version: 3.7.0
-  resolution: "@capsizecss/metrics@npm:3.7.0"
-  checksum: 10c0/72edbf3741f5888b92422acb63cc880588401dbdbcda339f937512398873b1589a0ab9daefd3c73504f1150c8f9a95defa03b73e98ce5186f03d0d9837501a74
+"@capsizecss/metrics@npm:4.3.0":
+  version: 4.3.0
+  resolution: "@capsizecss/metrics@npm:4.3.0"
+  checksum: 10c0/94d90f8ea4e00bb13a1280428b075caa5bdb1f04fdd4d34200d9a3f3b532c8f1167da38667eb0898fef0b4e95b9929c24ff19ee96c28352b81df6b146ba9ea77
   languageName: node
   linkType: hard
 
@@ -7652,7 +7652,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:7.29.7"
     "@babel/preset-env": "npm:7.29.7"
-    "@capsizecss/metrics": "npm:3.7.0"
+    "@capsizecss/metrics": "npm:4.3.0"
     "@capsizecss/unpack": "npm:3.0.1"
     "@eslint/js": "npm:^10.0.1"
     "@gulpjs/to-absolute-glob": "npm:^4.0.0"
