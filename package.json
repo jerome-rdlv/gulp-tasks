@@ -27,7 +27,7 @@
 		"eslint": "10.11.0",
 		"eslint-webpack-plugin": "4.2.0",
 		"fancy-log": "^2.0.0",
-		"fontaine": "0.8.2",
+		"fontaine": "1.0.0",
 		"fontverter": "^2.0.0",
 		"glob": "10.5.0",
 		"globals": "^15.8",

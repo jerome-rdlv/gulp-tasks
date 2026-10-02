@@ -6540,23 +6540,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fontaine@npm:0.8.2":
-  version: 0.8.2
-  resolution: "fontaine@npm:0.8.2"
+"fontaine@npm:1.0.0":
+  version: 1.0.0
+  resolution: "fontaine@npm:1.0.0"
   dependencies:
     "@capsizecss/unpack": "npm:^4.0.0"
     css-tree: "npm:^3.1.0"
-    magic-regexp: "npm:^0.11.0"
     magic-string: "npm:^1.0.0"
-    pathe: "npm:^2.0.3"
-    ufo: "npm:^1.6.1"
     unplugin: "npm:^3.0.0"
   peerDependencies:
     postcss: ^8.4.31
   peerDependenciesMeta:
     postcss:
       optional: true
-  checksum: 10c0/986688fd9c2eba1507336428ecf8e890e003947eb4e16347aebf3edd05cc16ec26b763deff9321f8db43ef8ea01ddcf183fbb957b8c1a7c311aabb8450bb4b77
+  checksum: 10c0/6c11b3f867efa0a58f13b5ec33db070ccc593d588af6516fb1694709cb49a6e0e26c42ea68952ea22f429f470988dffd0c4f8f03071038329da9dd19004d50fe
   languageName: node
   linkType: hard
 
@@ -7357,7 +7354,7 @@ __metadata:
     eslint: "npm:10.11.0"
     eslint-webpack-plugin: "npm:4.2.0"
     fancy-log: "npm:^2.0.0"
-    fontaine: "npm:0.8.2"
+    fontaine: "npm:1.0.0"
     fontverter: "npm:^2.0.0"
     glob: "npm:10.5.0"
     glob-parent: "npm:6.0.2"
@@ -9127,7 +9124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-regexp@npm:0.11.2, magic-regexp@npm:^0.11.0":
+"magic-regexp@npm:0.11.2":
   version: 0.11.2
   resolution: "magic-regexp@npm:0.11.2"
   dependencies:
@@ -10487,13 +10484,6 @@ __metadata:
   version: 4.0.0
   resolution: "path-type@npm:4.0.0"
   checksum: 10c0/666f6973f332f27581371efaf303fd6c272cc43c2057b37aa99e3643158c7e4b2626549555d88626e99ea9e046f82f32e41bbde5f1508547e9a11b149b52387c
-  languageName: node
-  linkType: hard
-
-"pathe@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "pathe@npm:2.0.3"
-  checksum: 10c0/c118dc5a8b5c4166011b2b70608762e260085180bb9e33e80a50dcdb1e78c010b1624f4280c492c92b05fc276715a4c357d1f9edc570f8f1b3d90b6839ebaca1
   languageName: node
   linkType: hard
 
@@ -13866,7 +13856,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ufo@npm:1.6.4, ufo@npm:^1.6.1":
+"ufo@npm:1.6.4":
   version: 1.6.4
   resolution: "ufo@npm:1.6.4"
   checksum: 10c0/3a2b29e7e3d772fbf6893d7d23bf442981457adb2fe122828abdbda89bedcb81aafd0dcc080e41b45f9a877db00cb42cbfee9639753a19d9b9bd39b5627039cf
