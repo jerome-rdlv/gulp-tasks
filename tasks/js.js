@@ -50,16 +50,16 @@ module.exports = function (
 										exclude: 'node_modules/**',
 										cacheDirectory: true,
 										presets: [
-											[
-												"@babel/preset-env",
-												{
-													corejs: 3.22,
-													useBuiltIns: 'entry',
-													modules: 'auto',
-													debug: !!process.env.DEBUG
-												}
-											]
-										]
+											["@babel/preset-env", {
+												modules: 'auto',
+												debug: !!process.env.DEBUG,
+											}]
+										],
+										plugins: [
+											["polyfill-corejs3", {
+												method: "entry-global",
+											}]
+										],
 									}
 								},
 							},
