@@ -1229,12 +1229,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capsizecss/unpack@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@capsizecss/unpack@npm:3.0.0"
+"@capsizecss/unpack@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@capsizecss/unpack@npm:3.0.1"
   dependencies:
     fontkit: "npm:^2.0.2"
-  checksum: 10c0/48bb11859833baa5032d71c330378cd5a523d37d752e0350f759d3ed45d6485c8bc363001d7bae596525f8e27ae52403387c6dc243f7dbd069a0a2094206e3cf
+  checksum: 10c0/2d576bd819975831d2f18c3852fb4f2de52cecc5e39c11721c320e8bc8e3017148743436f0b2a85223dd426471676a02f6d3b4830d21702a05d2f1fa002efb8b
   languageName: node
   linkType: hard
 
@@ -7653,7 +7653,7 @@ __metadata:
     "@babel/core": "npm:7.29.7"
     "@babel/preset-env": "npm:7.29.7"
     "@capsizecss/metrics": "npm:3.5.0"
-    "@capsizecss/unpack": "npm:3.0.0"
+    "@capsizecss/unpack": "npm:3.0.1"
     "@eslint/js": "npm:^10.0.1"
     "@gulpjs/to-absolute-glob": "npm:^4.0.0"
     anymatch: "npm:^3.1.3"
