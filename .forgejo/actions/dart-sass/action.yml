@@ -1,0 +1,23 @@
+name: install dart sass
+description: Install dart sass from github releases
+inputs:
+    version:
+        default: 1.101.0
+        description: Version of dart-sass to download from repo.
+        required: false
+runs:
+    using: composite
+    steps:
+
+        -   name: cache dart-sass
+            uses: https://code.forgejo.org/actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+            with:
+                path: ~/bin/dart-sass
+                key: ${{ runner.os }}-dart-sass-${{ inputs.version }}
+                restore-keys: ${{ runner.os }}-dart-sass-
+
+        -   name: install dart-sass
+            shell: bash
+            run: |
+                mkdir -p ~/bin/ && cd ~/bin/
+                test -x dart-sass/sass || wget -qO- https://github.com/sass/dart-sass/releases/download/${{ inputs.version }}/dart-sass-${{ inputs.version }}-linux-x64.tar.gz | tar xvfz -
