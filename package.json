@@ -55,7 +55,7 @@
 		"postcss-pxtorem": "6.1.0",
 		"postcss-value-parser": "4.2.0",
 		"sass": "^1.105.0",
-		"sass-embedded": "1.104.1",
+		"sass-embedded": "1.105.0",
 		"subset-font": "2.9.0",
 		"svgo": "3.3.5",
 		"through2": "^4.0",
