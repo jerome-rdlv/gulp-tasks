@@ -7742,7 +7742,7 @@ __metadata:
     svgo: "npm:3.3.5"
     through2: "npm:^4.0"
     ufo: "npm:1.6.4"
-    vinyl: "npm:^2.1"
+    vinyl: "npm:^3.0.0"
     vinyl-fs: "npm:^4.0"
     vinyl-named: "npm:1.1.0"
     vinyl-sourcemaps-apply: "npm:0.2.1"
@@ -14766,7 +14766,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinyl@npm:^2.1, vinyl@npm:^2.1.0, vinyl@npm:^2.2.1":
+"vinyl@npm:^2.1.0, vinyl@npm:^2.2.1":
   version: 2.2.1
   resolution: "vinyl@npm:2.2.1"
   dependencies:
