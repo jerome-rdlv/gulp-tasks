@@ -59,7 +59,7 @@
 		"subset-font": "2.9.0",
 		"svgo": "3.3.5",
 		"through2": "^4.0",
-		"ufo": "1.6.1",
+		"ufo": "1.6.4",
 		"vinyl": "^2.1",
 		"vinyl-fs": "^4.0",
 		"vinyl-named": "1.1.0",
