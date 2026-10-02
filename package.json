@@ -36,7 +36,7 @@
 		"gulp-clean": "0.4.0",
 		"gulp-eslint-new": "2.6.2",
 		"gulp-exec": "^5.0",
-		"gulp-if": "^2.0",
+		"gulp-if": "^3.0.0",
 		"gulp-imagemin": "7.1.0",
 		"gulp-rename": "^1.2",
 		"gulp-sass": "^6.0.1",

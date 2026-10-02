@@ -5378,18 +5378,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"duplexify@npm:^3.5.0":
-  version: 3.7.1
-  resolution: "duplexify@npm:3.7.1"
-  dependencies:
-    end-of-stream: "npm:^1.0.0"
-    inherits: "npm:^2.0.1"
-    readable-stream: "npm:^2.0.0"
-    stream-shift: "npm:^1.0.0"
-  checksum: 10c0/59d1440c1b4e3a4db35ae96933392703ce83518db1828d06b9b6322920d6cbbf0b7159e88be120385fe459e77f1eb0c7622f26e9ec1f47c9ff05c2b35747dbd3
-  languageName: node
-  linkType: hard
-
 "duplexify@npm:^4.1.1":
   version: 4.1.3
   resolution: "duplexify@npm:4.1.3"
@@ -7226,14 +7214,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-if@npm:^2.0":
-  version: 2.0.2
-  resolution: "gulp-if@npm:2.0.2"
+"gulp-if@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "gulp-if@npm:3.0.0"
   dependencies:
-    gulp-match: "npm:^1.0.3"
-    ternary-stream: "npm:^2.0.1"
-    through2: "npm:^2.0.1"
-  checksum: 10c0/5324989b6cc29bbbbe386c57f0680e8eef8595fb54f4da915069a1489b3b5c880802a8878593c63b314543393de1ecc7aedf4b9e3214442e701da71eb55ea668
+    gulp-match: "npm:^1.1.0"
+    ternary-stream: "npm:^3.0.0"
+    through2: "npm:^3.0.1"
+  checksum: 10c0/5ea29ecc3f34b5bbd595195b0ba80bb9ba644050515d78b53a74c0919ef7bfcd3773b7bc501e277c83fd9650773d76d1ca96670230823d23e385de00f858cb28
   languageName: node
   linkType: hard
 
@@ -7270,7 +7258,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-match@npm:^1.0.3":
+"gulp-match@npm:^1.1.0":
   version: 1.1.0
   resolution: "gulp-match@npm:1.1.0"
   dependencies:
@@ -7359,7 +7347,7 @@ __metadata:
     gulp-clean: "npm:0.4.0"
     gulp-eslint-new: "npm:2.6.2"
     gulp-exec: "npm:^5.0"
-    gulp-if: "npm:^2.0"
+    gulp-if: "npm:^3.0.0"
     gulp-imagemin: "npm:7.1.0"
     gulp-rename: "npm:^1.2"
     gulp-sass: "npm:^6.0.1"
@@ -9334,15 +9322,6 @@ __metadata:
     type-fest: "npm:^0.18.0"
     yargs-parser: "npm:^20.2.3"
   checksum: 10c0/998955ecff999dc3f3867ef3b51999218212497f27d75b9cbe10bdb73aac4ee308d484f7801fd1b3cfa4172819065f65f076ca018c1412fab19d0ea486648722
-  languageName: node
-  linkType: hard
-
-"merge-stream@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "merge-stream@npm:1.0.1"
-  dependencies:
-    readable-stream: "npm:^2.0.1"
-  checksum: 10c0/a670e74149ce7e0c7bf5cadfa8d8566b6bf67e89cf535db909bdba449a38155e425e43d2e6df0059ed4ce24a31195dce6f18d53043315b8aef4d34d7e6414ba4
   languageName: node
   linkType: hard
 
@@ -12997,7 +12976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-shift@npm:^1.0.0, stream-shift@npm:^1.0.2":
+"stream-shift@npm:^1.0.2":
   version: 1.0.3
   resolution: "stream-shift@npm:1.0.3"
   checksum: 10c0/939cd1051ca750d240a0625b106a2b988c45fb5a3be0cebe9a9858cb01bc1955e8c7b9fac17a9462976bea4a7b704e317c5c2200c70f0ca715a3363b9aa4fd3b
@@ -13482,18 +13461,6 @@ __metadata:
     type-fest: "npm:^0.16.0"
     unique-string: "npm:^2.0.0"
   checksum: 10c0/864a1cf1b5536dc21e84ae45dbbc3ba4dd2c7ec1674d895f99c349cf209df959a53d797ca38d0b2cf69c7684d565fde5cfc67faaa63b7208ffb21d454b957472
-  languageName: node
-  linkType: hard
-
-"ternary-stream@npm:^2.0.1":
-  version: 2.1.1
-  resolution: "ternary-stream@npm:2.1.1"
-  dependencies:
-    duplexify: "npm:^3.5.0"
-    fork-stream: "npm:^0.0.4"
-    merge-stream: "npm:^1.0.0"
-    through2: "npm:^2.0.1"
-  checksum: 10c0/37e9db3678676cb4662c33c8c11ec06d372ee38f97117ebbbfd07968d1f1d1f74c1adbe4277427da11cf68a805fc52672cc0ca03bfa5a7752e5c6829dbae966d
   languageName: node
   linkType: hard
 
