@@ -51,6 +51,10 @@ jobs:
                 shell: bash
                 run: yarn install --immutable
 
-            -   name: build assets
+            -   name: build assets dev
                 shell: bash
                 run: yarn run gulp
+
+            -   name: build assets prod
+                shell: bash
+                run: NODE_ENV=production yarn run gulp

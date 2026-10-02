@@ -72,7 +72,7 @@ const scss = require('../../tasks/scss')({
 	},
 });
 
-const stat = require('../../tasks/stats')({
+const stats = require('../../tasks/stats')({
 	paths,
 	fontsDataFile,
 	statsDataFile,
