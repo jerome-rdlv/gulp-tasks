@@ -29,7 +29,7 @@
 		"fancy-log": "^2.0.0",
 		"fontaine": "1.0.0",
 		"fontverter": "^2.0.0",
-		"glob": "10.5.0",
+		"glob": "13.0.6",
 		"globals": "^15.8",
 		"gulp": "^5.0",
 		"gulp-changed": "^3.2",
