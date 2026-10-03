@@ -85,6 +85,7 @@ module.exports = function (
 					],
 				}
 			}))
+			.on('error', console.error)
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist, {sourcemaps: true}))
 			;

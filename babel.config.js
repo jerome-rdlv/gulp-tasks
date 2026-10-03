@@ -3,11 +3,13 @@ module.exports = {
 		[
 			"@babel/preset-env",
 			{
-				corejs: "3.37",
-				// https://babeljs.io/docs/babel-preset-env#usebuiltins
-				useBuiltIns: "entry",
 				modules: 'auto',
 			},
 		],
-	]
+	],
+	plugins: [
+		["polyfill-corejs3", {
+			method: "entry-global",
+		}]
+	],
 };
