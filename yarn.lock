@@ -4763,7 +4763,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano-preset-default@npm:^9.1.1":
+"cssnano-preset-default@npm:^9.1.2":
   version: 9.1.2
   resolution: "cssnano-preset-default@npm:9.1.2"
   dependencies:
@@ -4813,14 +4813,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano@npm:9.1.1":
-  version: 9.1.1
-  resolution: "cssnano@npm:9.1.1"
+"cssnano@npm:9.1.2":
+  version: 9.1.2
+  resolution: "cssnano@npm:9.1.2"
   dependencies:
-    cssnano-preset-default: "npm:^9.1.1"
+    cssnano-preset-default: "npm:^9.1.2"
   peerDependencies:
     postcss: ^8.5.28
-  checksum: 10c0/66cab5ba30b22600382ae9393b48eef6d91f1d16d39a5c04f55dfa50e921549e42cf60caa9818de9638e41d7d4160b0d0af161efef880f7cabf89ca9f964e076
+  checksum: 10c0/d455b88214523ad35ebd8bbf006a60475b96825f3cc80054aac03d6d498bd5783e7045f5c5da9a1c2a963819f01db327e2af15b4ecb01feb48373213518e973e
   languageName: node
   linkType: hard
 
@@ -7371,7 +7371,7 @@ __metadata:
     critical: "npm:4.0.1"
     css-font-face-src: "npm:2.1.0"
     css-mediaquery: "npm:0.1.2"
-    cssnano: "npm:9.1.1"
+    cssnano: "npm:9.1.2"
     eslint: "npm:10.11.0"
     eslint-webpack-plugin: "npm:4.2.0"
     fancy-log: "npm:^2.0.0"
