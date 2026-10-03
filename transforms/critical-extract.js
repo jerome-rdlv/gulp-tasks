@@ -1,5 +1,5 @@
 const {objectTransform: transform} = require('through2');
-const critical = require('critical');
+const critical = require('critical').default;
 const Vinyl = require('vinyl');
 
 module.exports = function (entries, opts, concurrency = exports.CONCURRENCY) {
@@ -12,18 +12,16 @@ module.exports = function (entries, opts, concurrency = exports.CONCURRENCY) {
 
 	function handle([filename, url]) {
 		// https://www.npmjs.com/package/critical
-		return critical
-			.generate({
-				...opts,
-				extract: true,
-				src: url,
-			}, null)
-			.then(({css}) => {
-				stream.write(new Vinyl({
-					path: filename,
-					contents: Buffer.from(css),
-				}));
-			});
+		return critical({
+			...opts,
+			extract: true,
+			src: url,
+		}).then(({css}) => {
+			stream.write(new Vinyl({
+				path: filename,
+				contents: Buffer.from(css),
+			}));
+		});
 	}
 
 	function consume() {

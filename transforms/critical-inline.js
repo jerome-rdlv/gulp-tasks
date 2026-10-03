@@ -1,18 +1,16 @@
 const {objectTransform: transform} = require('through2');
-const critical = require('critical');
+const critical = require('critical').default;
 
 module.exports = function (opts) {
 	// https://www.npmjs.com/package/critical
 	return transform(function (file, encoding, complete) {
-		critical
-			.generate({
-				...opts,
-				inline: true,
-				src: file.path
-			}, null)
-			.then(({html}) => {
-				file.contents = Buffer.from(html);
-				complete(null, file);
-			});
+		critical({
+			...opts,
+			inline: true,
+			src: file.path
+		}).then(({html}) => {
+			file.contents = Buffer.from(html);
+			complete(null, file);
+		});
 	});
 }
