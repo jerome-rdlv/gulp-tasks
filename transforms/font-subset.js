@@ -7,11 +7,7 @@ const unicodeRange = require('../lib/unicode-range');
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@font-face/unicode-range
  */
 exports.transform = function (subsets) {
-
-	const map = {};
-
 	function eachFile(file, encoding, complete) {
-
 		// resolve subsets
 		const fsubsets = typeof subsets === 'function'
 			? subsets.call(null, file)
@@ -73,7 +69,6 @@ exports.transform = function (subsets) {
 				});
 			});
 	}
-
 	return transform(eachFile);
 };
 

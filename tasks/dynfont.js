@@ -22,8 +22,6 @@ module.exports = function (
 			throw new Error('Must give a fontSubsetFile argument, to store subsets data.');
 		}
 
-		fs.mkdir(path.dirname(fontSubsetFile), {recursive: true});
-
 		return gulp.src(globs, {
 			allowEmpty: true,
 			base: paths.src,
@@ -31,7 +29,14 @@ module.exports = function (
 			removeBOM: false,
 		})
 			.pipe(changed(paths.dist, {
-				hasChanged: (stream, file) => fs.stat(fontSubsetFile).then(stat => stat.mtime < file.stat.mtime),
+				hasChanged: async (file) => {
+					try {
+						const stat = await fs.stat(fontSubsetFile);
+						return stat.mtime < file.stat.mtime ? file : null;
+					} catch (error) {
+						return file;
+					}
+				},
 			}))
 			.pipe(fontsubset.transform(subsets))
 			.pipe(fontconvert())
