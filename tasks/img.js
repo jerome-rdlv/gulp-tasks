@@ -1,4 +1,4 @@
-const changed = require('gulp-changed');
+const changed = require('gulp-changed').default;
 const gulp = require('gulp');
 const imagemin = require('gulp-imagemin');
 const touch = require('../lib/touch');

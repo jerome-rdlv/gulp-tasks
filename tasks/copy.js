@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const changed = require('gulp-changed');
+const changed = require('gulp-changed').default;
 const touch = require('../lib/touch');
 
 module.exports = (paths, globs) => {

@@ -1,4 +1,4 @@
-const changed = require('gulp-changed');
+const changed = require('gulp-changed').default;
 const fontconvert = require('../transforms/font-convert');
 const fontsubset = require('../transforms/font-subset');
 const fs = require('node:fs/promises');

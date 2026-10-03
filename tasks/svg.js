@@ -1,4 +1,4 @@
-const changed = require('gulp-changed');
+const changed = require('gulp-changed').default;
 const clearSvgParams = require('../transforms/clear-svg-params');
 const createSprites = require('../transforms/sprites');
 const dom = require('../transforms/dom');
