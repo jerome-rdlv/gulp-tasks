@@ -6824,7 +6824,7 @@ __metadata:
     lodash: "npm:4.18.1"
     magic-regexp: "npm:0.11.2"
     mime-types: "npm:^3.0.0"
-    mustache: "npm:2.3.2"
+    mustache: "npm:4.2.0"
     plugin-error: "npm:2.0.1"
     postcss: "npm:8.5.28"
     postcss-load-config: "npm:^6.0.1"
@@ -8836,12 +8836,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mustache@npm:2.3.2":
-  version: 2.3.2
-  resolution: "mustache@npm:2.3.2"
+"mustache@npm:4.2.0":
+  version: 4.2.0
+  resolution: "mustache@npm:4.2.0"
   bin:
-    mustache: ./bin/mustache
-  checksum: 10c0/c5ed95e69b47b5cf442fabbbffb573b5affe4d8d2db9a607f9cc67b9d61a69813f3da5058ebf3d3c2f65538dbf4180b5bd188b5fa4a8864891b5330425ae5065
+    mustache: bin/mustache
+  checksum: 10c0/1f8197e8a19e63645a786581d58c41df7853da26702dbc005193e2437c98ca49b255345c173d50c08fe4b4dbb363e53cb655ecc570791f8deb09887248dd34a2
   languageName: node
   linkType: hard
 
