@@ -12865,20 +12865,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinyl@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "vinyl@npm:3.0.0"
-  dependencies:
-    clone: "npm:^2.1.2"
-    clone-stats: "npm:^1.0.0"
-    remove-trailing-separator: "npm:^1.1.0"
-    replace-ext: "npm:^2.0.0"
-    teex: "npm:^1.0.1"
-  checksum: 10c0/566ab41a84c1a167023a07cb94110d40a07835a5239297e3266a11b0e9c522969a1e623ec2a4f9b05ac7fef596cf47685b410359e5b2ca00bd77400657808816
-  languageName: node
-  linkType: hard
-
-"vinyl@npm:^3.0.1":
+"vinyl@npm:^3.0.0, vinyl@npm:^3.0.1":
   version: 3.0.1
   resolution: "vinyl@npm:3.0.1"
   dependencies:
