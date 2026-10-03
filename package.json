@@ -21,7 +21,7 @@
 		"babel-plugin-polyfill-corejs3": "^1.0.0",
 		"browser-sync": "3.0.4",
 		"characterset": "2.0.0",
-		"critical": "4.0.1",
+		"critical": "9.0.0",
 		"css-font-face-src": "2.1.0",
 		"css-mediaquery": "0.1.2",
 		"cssnano": "9.1.1",
