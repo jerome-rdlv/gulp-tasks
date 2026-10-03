@@ -2431,6 +2431,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/expect@npm:^1.20.4":
+  version: 1.20.4
+  resolution: "@types/expect@npm:1.20.4"
+  checksum: 10c0/3404e72a2ecc74dfee1671504ac06e8e6a48c572b46df588a9d6a2dfed5c9f33c5a63d1aa51fc86e6e8323403924db8a14cbd923569470c841bc0353a9d397e0
+  languageName: node
+  linkType: hard
+
 "@types/gensync@npm:^1.0.5":
   version: 1.0.5
   resolution: "@types/gensync@npm:1.0.5"
@@ -2534,6 +2541,16 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/a58ba341cb9e7d74f71810a88862da7b2a6fa42e2a1fc0ce40498f6ea1d44382f0640117057da779f74c47039f7166bf48fad02dc876f94e005c7afa50f5e129
+  languageName: node
+  linkType: hard
+
+"@types/vinyl@npm:^2.0.9":
+  version: 2.0.12
+  resolution: "@types/vinyl@npm:2.0.12"
+  dependencies:
+    "@types/expect": "npm:^1.20.4"
+    "@types/node": "npm:*"
+  checksum: 10c0/101c72c44f3eb9cd049c80d2ea65376b1c2fd72ba7da21aef04674670659cf6ed5b21b5041f40cc34a64463046a30ed4657a576ce59f4fbc7c347615211fe5e1
   languageName: node
   linkType: hard
 
@@ -3839,6 +3856,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:^5.3.0":
+  version: 5.6.2
+  resolution: "chalk@npm:5.6.2"
+  checksum: 10c0/99a4b0f0e7991796b1e7e3f52dceb9137cae2a9dfc8fc0784a550dc4c558e15ab32ed70b14b21b52beb2679b4892b41a0aa44249bcb996f01e125d58477c6976
+  languageName: node
+  linkType: hard
+
+"change-file-extension@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "change-file-extension@npm:0.1.1"
+  checksum: 10c0/aa32f5f6ab69aba12b58cf37eb1a418c6f5b1cf334a85f584f4ea45032b6932efc54cc5e176155c382c30adbac4b37379ef00578b60680f1d5cf847c850af100
+  languageName: node
+  linkType: hard
+
 "characterset@npm:2.0.0":
   version: 2.0.0
   resolution: "characterset@npm:2.0.0"
@@ -5007,6 +5038,13 @@ __metadata:
   dependencies:
     lodash: "npm:^4.17.10"
   checksum: 10c0/0919927df255f5ad01dde06ce1b6da0665fda5b55dcc9bff8962fa96f443ce8a288bc2288e43cbf940804f250183f9e2f4ee841f2de4392a1c234d692291d705
+  languageName: node
+  linkType: hard
+
+"easy-transform-stream@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "easy-transform-stream@npm:1.0.1"
+  checksum: 10c0/5f6c30a58e567b2273b19562fbe71d87ae23ad7e975563df12c7dbac0b6085678367bc64b17241d0c24de0054eaf2b877e022f5ded0c9400001b7dc53a85dd97
   languageName: node
   linkType: hard
 
@@ -6602,17 +6640,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-changed@npm:^3.2":
-  version: 3.2.0
-  resolution: "gulp-changed@npm:3.2.0"
+"gulp-changed@npm:^5.0.0":
+  version: 5.0.4
+  resolution: "gulp-changed@npm:5.0.4"
   dependencies:
-    make-dir: "npm:^1.1.0"
-    pify: "npm:^3.0.0"
-    plugin-error: "npm:^0.1.2"
-    replace-ext: "npm:^1.0.0"
-    through2: "npm:^2.0.0"
+    change-file-extension: "npm:^0.1.0"
+    gulp-plugin-extras: "npm:^0.3.0"
     touch: "npm:^3.1.0"
-  checksum: 10c0/5c027c8964e962697fc9af02ec67db972091c3a0cc8ff9b1d1d02112df9f70da21e2ebf5eff542c708f59c131d064155861ac4300fc7b4a0793439e1f7b4475f
+  peerDependencies:
+    gulp: ">=4"
+  peerDependenciesMeta:
+    gulp:
+      optional: true
+  checksum: 10c0/c83b9fef306df76e9fbbda90ad7e68554ec919bd20cbefeb8422d15e32869b56ab273584fd022f2f791183a6174c78661db12e20f535fbd29c4ec601fea5e5d0
   languageName: node
   linkType: hard
 
@@ -6732,6 +6772,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gulp-plugin-extras@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "gulp-plugin-extras@npm:0.3.0"
+  dependencies:
+    "@types/vinyl": "npm:^2.0.9"
+    chalk: "npm:^5.3.0"
+    easy-transform-stream: "npm:^1.0.1"
+  checksum: 10c0/8166d7b76ba501c7be8477b7058ef3fc4fa67f251e99921fe38d0169d686223ee0d03ee874608d9441db045205a95a98b2d62c2716ae433f39a3e7362e5e05c5
+  languageName: node
+  linkType: hard
+
 "gulp-rename@npm:^2.0.0":
   version: 2.1.0
   resolution: "gulp-rename@npm:2.1.0"
@@ -6809,7 +6860,7 @@ __metadata:
     glob-parent: "npm:6.0.2"
     globals: "npm:^17.0.0"
     gulp: "npm:^5.0"
-    gulp-changed: "npm:^3.2"
+    gulp-changed: "npm:^5.0.0"
     gulp-clean: "npm:0.4.0"
     gulp-eslint-new: "npm:2.6.2"
     gulp-exec: "npm:^5.0"
@@ -8385,7 +8436,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-dir@npm:^1.0.0, make-dir@npm:^1.1.0, make-dir@npm:^1.2.0":
+"make-dir@npm:^1.0.0, make-dir@npm:^1.2.0":
   version: 1.3.0
   resolution: "make-dir@npm:1.3.0"
   dependencies:
