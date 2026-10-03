@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const handleError = require('../lib/handle-error');
+const handleError = require('../lib/handle-error').default;
 const postcss = require('../lib/stream-postcss');
 const renameScssToCss = require('../lib/scss-to-css');
 const rename = require('gulp-rename');
