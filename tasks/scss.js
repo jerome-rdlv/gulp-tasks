@@ -1,10 +1,9 @@
 const gulp = require('gulp');
+const handleError = require('../lib/handle-error');
 const postcss = require('../lib/stream-postcss');
 const renameScssToCss = require('../lib/scss-to-css');
 const rename = require('gulp-rename');
-const sourcemaps = require('gulp-sourcemaps');
 const touch = require('../lib/touch');
-const exec = require('gulp-exec');
 const path = require('path');
 
 module.exports = function (
@@ -79,9 +78,4 @@ module.exports = function (
 	watch.displayName = 'scss:watch';
 
 	return {main, watch};
-}
-
-function handleError(error) {
-	console.log(error.toString());
-	this.emit('end');
 }

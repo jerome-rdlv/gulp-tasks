@@ -1,7 +1,7 @@
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const gulp = require('gulp');
-const named = require('vinyl-named');
+const handleError = require('../lib/handle-error');
 const path = require('path');
 const touch = require('../lib/touch');
 const webpack = require('webpack-stream');
@@ -85,7 +85,7 @@ module.exports = function (
 					],
 				}
 			}))
-			.on('error', console.error)
+			.on('error', handleError)
 			.pipe(touch())
 			.pipe(gulp.dest(paths.dist, {sourcemaps: true}))
 			;
