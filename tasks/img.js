@@ -4,13 +4,11 @@ const touch = require('../lib/touch');
 
 module.exports = function (paths, globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`) {
 
-	const main = function () {
-
-		return Promise.all([
-			import('gulp-imagemin'),
-			require('../defaults/imagemin')
-		]).then(([imagemin, defaults]) => {
-			return gulp.src(globs, {
+	const main = async function () {
+		const imagemin = await import('gulp-imagemin');
+		const defaults = await require('../defaults/imagemin');
+		return new Promise((resolve, reject) => {
+			gulp.src(globs, {
 				base: paths.src,
 				encoding: false,
 			})
@@ -18,7 +16,8 @@ module.exports = function (paths, globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|
 				.pipe(imagemin.default(defaults, {verbose: false}))
 				.pipe(touch())
 				.pipe(gulp.dest(paths.dist))
-				;
+				.on('end', resolve)
+				.on('error', reject);
 		});
 	};
 
