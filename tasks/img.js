@@ -1,21 +1,25 @@
 const changed = require('gulp-changed').default;
 const gulp = require('gulp');
-const imagemin = require('gulp-imagemin');
 const touch = require('../lib/touch');
 
 module.exports = function (paths, globs = `${paths.src}/img/**/*.+(gif|jpg|jpeg|png)`) {
 
 	const main = function () {
 
-		return gulp.src(globs, {
-			base: paths.src,
-			encoding: false,
-		})
-			.pipe(changed(paths.dist))
-			.pipe(imagemin(require('../defaults/imagemin'), {verbose: false}))
-			.pipe(touch())
-			.pipe(gulp.dest(paths.dist))
-			;
+		return Promise.all([
+			import('gulp-imagemin'),
+			require('../defaults/imagemin')
+		]).then(([imagemin, defaults]) => {
+			return gulp.src(globs, {
+				base: paths.src,
+				encoding: false,
+			})
+				.pipe(changed(paths.dist))
+				.pipe(imagemin.default(defaults, {verbose: false}))
+				.pipe(touch())
+				.pipe(gulp.dest(paths.dist))
+				;
+		});
 	};
 
 	const watch = function () {
