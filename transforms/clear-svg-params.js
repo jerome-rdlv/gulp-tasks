@@ -1,8 +1,7 @@
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 
 module.exports = function () {
-	// noinspection JSCheckFunctionSignatures
-	return through.objectTransform(function (file, encoding, complete) {
+	return transform(function (file, encoding, complete) {
 		const contents = file.contents.toString(encoding)
 			.replace(/{\$.*?:(.*?)}/g, function () {
 				return arguments[1];

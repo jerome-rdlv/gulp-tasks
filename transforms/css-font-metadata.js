@@ -1,8 +1,6 @@
 const fs = require('node:fs/promises');
-const path = require('path');
 const postcss = require('../lib/stream-postcss');
-const through = require('through2');
-const Vinyl = require('vinyl');
+const {objectTransform: transform} = require('through2');
 
 module.exports = function ({output, aliases = {}, filter}) {
 
@@ -19,5 +17,5 @@ module.exports = function ({output, aliases = {}, filter}) {
 		}
 	}
 
-	return through.objectTransform(postcss([fontMetadata])._transform, endStream, false);
+	return transform(postcss([fontMetadata])._transform, endStream, false);
 };

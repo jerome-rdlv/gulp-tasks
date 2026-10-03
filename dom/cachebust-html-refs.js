@@ -1,5 +1,5 @@
 const fs = require('fs');
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 const URL = require('../lib/url');
 
 /**
@@ -11,8 +11,7 @@ const URL = require('../lib/url');
  */
 exports.get = function (dist, cachebustUrl, getFileSignature) {
 	return function () {
-		// noinspection JSCheckFunctionSignatures
-		return through.objectTransform(function (file, encoding, complete) {
+		return transform(function (file, encoding, complete) {
 			const dom = new (require('jsdom').JSDOM)(file.contents.toString(encoding), {
 				contentType: 'text/html',
 			});

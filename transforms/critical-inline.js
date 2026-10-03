@@ -1,10 +1,9 @@
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 const critical = require('critical');
 
 module.exports = function (opts) {
 	// https://www.npmjs.com/package/critical
-	// noinspection JSCheckFunctionSignatures
-	return through.objectTransform(function (file, encoding, complete) {
+	return transform(function (file, encoding, complete) {
 		critical
 			.generate({
 				...opts,

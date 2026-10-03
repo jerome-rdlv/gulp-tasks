@@ -1,6 +1,6 @@
 const fs = require('node:fs/promises');
 const gulp = require('gulp');
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 
 function getText(nodes, properties) {
 	const text = Array.prototype.map.call(nodes, node => node.textContent).join('');
@@ -75,7 +75,7 @@ function generateTable(outputPath, exclude, fonts) {
 		}
 	}
 
-	return through.objectTransform(eachFile, endStream, false);
+	return transform(eachFile, endStream, false);
 }
 
 module.exports = function (

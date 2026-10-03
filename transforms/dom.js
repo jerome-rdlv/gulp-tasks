@@ -1,11 +1,9 @@
 const PluginError = require('plugin-error');
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 const lookup = require('mime-types').lookup;
 
 module.exports = function ({plugins = [], options = {}}) {
-
-	// noinspection JSCheckFunctionSignatures
-	return through.objectTransform(function (file, encoding, complete) {
+	return transform(function (file, encoding, complete) {
 		const pending = [...plugins];
 
 		Promise.resolve()

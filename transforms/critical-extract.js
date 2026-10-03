@@ -1,11 +1,10 @@
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 const critical = require('critical');
 const Vinyl = require('vinyl');
 
 module.exports = function (entries, opts, concurrency = exports.CONCURRENCY) {
 
-	// noinspection JSCheckFunctionSignatures
-	const stream = through.objectTransform(function (file, encoding, complete) {
+	const stream = transform(function (file, encoding, complete) {
 		complete(null, file);
 	});
 

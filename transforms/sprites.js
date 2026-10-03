@@ -1,9 +1,4 @@
-const subsetFont = require('subset-font');
-const fontverter = require('fontverter');
-const through = require('through2');
-const PluginError = require('plugin-error');
-const unicodeRange = require('../lib/unicode-range');
-const fs = require('node:fs/promises');
+const {objectTransform: transform} = require('through2');
 const jsdom = require('jsdom').JSDOM;
 const path = require('path');
 const Vinyl = require('vinyl');
@@ -74,5 +69,5 @@ module.exports = function (sources) {
 		complete();
 	}
 
-	return through.objectTransform(eachFile, endStream, false);
+	return transform(eachFile, endStream, false);
 };

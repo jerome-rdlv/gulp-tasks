@@ -1,8 +1,7 @@
 const fs = require('fs');
 const mustache = require('mustache');
 const path = require('path');
-const PluginError = require('plugin-error');
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 const Vinyl = require('vinyl');
 
 module.exports = function ({template, output, base} = {}) {
@@ -89,6 +88,5 @@ module.exports = function ({template, output, base} = {}) {
 		}
 	}
 
-	// noinspection JSCheckFunctionSignatures
-	return through.objectTransform(eachFile, endStream);
+	return transform(eachFile, endStream);
 };

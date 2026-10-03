@@ -1,7 +1,6 @@
 const applySourceMap = require('../lib/apply-sass-sourcemaps');
 const PluginError = require('plugin-error');
 const sass = require('sass-embedded');
-const through = require('through2');
 const {NodePackageImporter} = require('sass-embedded');
 const Stream = require('stream')
 

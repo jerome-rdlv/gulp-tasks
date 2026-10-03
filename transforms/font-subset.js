@@ -1,6 +1,5 @@
 const subsetFont = require('subset-font');
-const fontverter = require('fontverter');
-const through = require('through2');
+const {objectTransform: transform} = require('through2');
 const PluginError = require('plugin-error');
 const unicodeRange = require('../lib/unicode-range');
 
@@ -75,7 +74,7 @@ exports.transform = function (subsets) {
 			});
 	}
 
-	return through.objectTransform(eachFile);
+	return transform(eachFile);
 };
 
 exports.FORMATS = {
