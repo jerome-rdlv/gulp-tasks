@@ -71,7 +71,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.29.9":
+"@babel/eslint-parser@npm:7.29.9":
   version: 7.29.9
   resolution: "@babel/eslint-parser@npm:7.29.9"
   dependencies:
@@ -85,7 +85,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-plugin@npm:^8.0.6":
+"@babel/eslint-plugin@npm:8.0.6":
   version: 8.0.6
   resolution: "@babel/eslint-plugin@npm:8.0.6"
   peerDependencies:
@@ -4896,7 +4896,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-compat@npm:^7.0.2":
+"eslint-plugin-compat@npm:7.0.2":
   version: 7.0.2
   resolution: "eslint-plugin-compat@npm:7.0.2"
   dependencies:
@@ -6389,8 +6389,8 @@ __metadata:
   resolution: "gulp-tasks@workspace:."
   dependencies:
     "@babel/core": "npm:8.0.6"
-    "@babel/eslint-parser": "npm:^7.29.9"
-    "@babel/eslint-plugin": "npm:^8.0.6"
+    "@babel/eslint-parser": "npm:7.29.9"
+    "@babel/eslint-plugin": "npm:8.0.6"
     "@babel/preset-env": "npm:8.0.6"
     "@capsizecss/metrics": "npm:4.3.0"
     "@capsizecss/unpack": "npm:4.0.1"
@@ -6405,7 +6405,7 @@ __metadata:
     css-mediaquery: "npm:0.1.2"
     cssnano: "npm:9.1.2"
     eslint: "npm:9.39.5"
-    eslint-plugin-compat: "npm:^7.0.2"
+    eslint-plugin-compat: "npm:7.0.2"
     eslint-webpack-plugin: "npm:6.0.0"
     fancy-log: "npm:^2.0.0"
     fontaine: "npm:1.0.0"
