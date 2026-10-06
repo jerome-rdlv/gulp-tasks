@@ -23,7 +23,7 @@
 		"critical": "9.0.0",
 		"css-font-face-src": "2.1.0",
 		"css-mediaquery": "0.1.2",
-		"cssnano": "9.1.2",
+		"cssnano": "9.2.0",
 		"eslint": "9.39.5",
 		"eslint-webpack-plugin": "6.0.0",
 		"fancy-log": "^2.0.0",
