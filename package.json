@@ -51,7 +51,7 @@
 		"plugin-error": "2.0.1",
 		"postcss": "8.5.28",
 		"postcss-load-config": "^6.0.1",
-		"postcss-preset-env": "11.5.5",
+		"postcss-preset-env": "11.6.0",
 		"postcss-pxtorem": "6.1.0",
 		"postcss-value-parser": "4.2.0",
 		"sass": "^1.105.0",
