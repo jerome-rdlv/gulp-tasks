@@ -71,6 +71,7 @@ module.exports = function (
 	}
 
 	function watch() {
+		handleError.watch = true;
 		return gulp.watch(watched, main);
 	}
 
