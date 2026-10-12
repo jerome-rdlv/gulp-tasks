@@ -9,66 +9,69 @@ const unicodeRange = require('../lib/unicode-range');
 exports.transform = function (subsets) {
 	function eachFile(file, encoding, complete) {
 		// resolve subsets
-		const fsubsets = typeof subsets === 'function'
-			? subsets.call(null, file)
-			: (typeof subsets === 'string' ? [{name: 'c', text: subsets}] : subsets);
+		Promise.resolve(subsets).then((subsets) => {
+			const fsubsets = typeof subsets === 'function'
+				? subsets.call(null, file)
+				: (typeof subsets === 'string' ? [{name: 'c', text: subsets}] : subsets);
 
-		if (fsubsets === false) {
-			// no subsetting for this particular font
-			file.subset = {
-				range: exports.FULL_RANGE,
-				name: 'full',
-			};
-			this.push(file);
+			if (fsubsets === false) {
+				// no subsetting for this particular font
+				file.subset = {
+					range: exports.FULL_RANGE,
+					name: 'full',
+				};
+				this.push(file);
 
-			complete();
-			return;
-		}
-
-		Promise.all(fsubsets.map(async ({name, text, range}) => {
-
-			if (!name) {
-				throw new Error(`A subset must have a name.`);
-			}
-
-			if (!text && !range) {
-				throw new Error(`A subset must have either a text or ar range.`);
-			}
-
-			if (!text) {
-				text = await unicodeRange.toText(range);
-			}
-
-			if (!range) {
-				range = await unicodeRange.fromText(text);
-				// update text from range to benefit from deduplication and sorting
-				text = await unicodeRange.toText(range);
-			}
-
-			return subsetFont(file.contents, text, {
-				targetFormat: exports.FORMATS[file.extname.substring(1)],
-			}).then(buffer => {
-				const clone = file.clone({contents: false});
-				clone.contents = buffer;
-				if (fsubsets.length > 1) {
-					clone.stem = `${clone.stem}.${name}`;
-				}
-				clone.subset = {range, name};
-				return clone;
-			});
-		}))
-			.then((files) => {
-				// important: push files here to maintain subsets order
-				files.forEach(file => this.push(file));
 				complete();
-			})
-			.catch(e => {
-				throw new PluginError('font-subset', e, {
-					fileName: file.path,
-					showStack: true,
+				return;
+			}
+
+			Promise.all(fsubsets.map(async ({name, text, range}) => {
+
+				if (!name) {
+					throw new Error(`A subset must have a name.`);
+				}
+
+				if (!text && !range) {
+					throw new Error(`A subset must have either a text or ar range.`);
+				}
+
+				if (!text) {
+					text = await unicodeRange.toText(range);
+				}
+
+				if (!range) {
+					range = await unicodeRange.fromText(text);
+					// update text from range to benefit from deduplication and sorting
+					text = await unicodeRange.toText(range);
+				}
+
+				return subsetFont(file.contents, text, {
+					targetFormat: exports.FORMATS[file.extname.substring(1)],
+				}).then(buffer => {
+					const clone = file.clone({contents: false});
+					clone.contents = buffer;
+					if (fsubsets.length > 1) {
+						clone.stem = `${clone.stem}.${name}`;
+					}
+					clone.subset = {range, name};
+					return clone;
 				});
-			});
+			}))
+				.then((files) => {
+					// important: push files here to maintain subsets order
+					files.forEach(file => this.push(file));
+					complete();
+				})
+				.catch(e => {
+					throw new PluginError('font-subset', e, {
+						fileName: file.path,
+						showStack: true,
+					});
+				});
+		});
 	}
+
 	return transform(eachFile);
 };
 
@@ -91,3 +94,21 @@ exports.SUBSETS = [
 		range: 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF',
 	},
 ];
+
+exports.extend = function (extensions) {
+	return Promise.all(exports.SUBSETS.map(subset => {
+		const extension = extensions[subset.name];
+		if (!extension) {
+			return subset;
+		}
+		return Promise.resolve()
+			.then(range => unicodeRange.toText(subset.range))
+			.then(text => unicodeRange.fromText(text + extension))
+			.then(range => {
+				return {
+					name: subset.name,
+					range: range,
+				};
+			});
+	}));
+}
